@@ -37,10 +37,10 @@ public class Menu {
 
     public int choseOption(int choice) {
         switch (choice){
-            case 1 -> create_Peasant();
-            case 2 -> create_Peasant();
-            case 3 -> create_Mage();
-            case 4 -> create_Peasant();
+            case 1 -> createCharacter("Peasant");
+            case 2 -> createCharacter("Warrior");
+            case 3 -> createCharacter("Mage");
+            case 4 -> createCharacter("Thief");
             case 5 -> menuRemove();
             case 6 -> { character.display_list(); display_submenu(); }
             case 7 -> fightForGlory();
@@ -51,18 +51,15 @@ public class Menu {
         return awaitChoice();
     }
 
-    private void create_Peasant() {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter the name of the new Peasant : ");
-        String name = input.nextLine();
-        character.add_character(new Peasant(name, 2, 10, 4));
-    }
+    private void createCharacter(String role) {
+        System.out.print("Enter the name of the new " + role + " : ");
+        Scanner new_character = new Scanner(System.in);
+        String name = new_character.nextLine();
 
-    private void create_Mage() {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter the name of the new Mage : ");
-        String name = input.nextLine();
-        character.add_character(new Mage(name, 2, 10, 4));
+        if(role.equals("Peasant")) character.add_character(new Peasant(name, 2, 10, 4));
+        if(role.equals("Warrior")) character.add_character(new Warrior(name, 2, 10, 4));
+        if(role.equals("Mage"))    character.add_character(new Mage   (name, 2, 10, 4));
+        if(role.equals("Thief"))   character.add_character(new Thief  (name, 2, 10, 4));
     }
 
     public int menuRemove() {
