@@ -5,70 +5,86 @@ import java.util.Scanner;
 public class Menu {
     Character character = new Character();
 
-    public void displayMenu(){
-        System.out.println("Chose :");
-        System.out.println("1. Quit");
-        System.out.println("2. Create Default Character");
-        System.out.println("3. Create Warrior Character");
-        System.out.println("4. Create Mage Character");
-        System.out.println("5. Create Thief Character");
-        System.out.println("6. Display List");
-        System.out.println("7. Remove A Character");
-        System.out.println("8. Fight.");
-
-        Scanner input = new Scanner(System.in);
-        int inputChoice = Integer.parseInt(input.nextLine());
-        choseOption(inputChoice);
-
+    public void MenuWelcome() {
+        System.out.println("Welcome to the game !\nPlease select the options below to start the adventure.");
+        displayMenu();
     }
 
-    public void choseOption(int input){
+    public int displayMenu(){
+        System.out.print(
+                """
+                                        
+                +-------------------------------+------------------------------+\s
+                |  1. Create Default Character  |  5. Remove A Character       |
+                |  2. Create Warrior Character  |  6. Display Characters List  |
+                |  3. Create Mage Character     |  7. Fight For Glory          |
+                |  4. Create Thief Character    |  8. Exit The Game            |
+                +-------------------------------+------------------------------+\s
+                """
+        );
+
+        System.out.print("Your choice : ");
+        Scanner input = new Scanner(System.in);
+        int inputChoice = Integer.parseInt(input.nextLine());
+        return choseOption(inputChoice);
+    }
+
+    public int choseOption(int input){
         switch (input){
-            case 1 -> System.exit(0);
+            case 1 -> create_Peasant();
             case 2 -> create_Peasant();
-            case 3 -> create_Peasant();
-            case 4 -> create_Mage();
-            case 5 -> create_Peasant();
+            case 3 -> create_Mage();
+            case 4 -> create_Peasant();
+            case 5 -> menuRemove();
             case 6 -> {
+                System.out.println("\nDisplaying the characters list..");
                 character.display_list();
                 display_submenu();
             }
-            case 7 -> menuRemove();
-            case 8 -> fightToTheDeath();
+            case 7 -> fightToTheDeath();
+            case 8 -> System.exit(0);
             case default -> System.out.println("Error.");
         }
+        return displayMenu();
     }
 
     private void create_Peasant() {
         Scanner input = new Scanner(System.in);
-        System.out.print("Enter the name of the new character : ");
+        System.out.print("Enter the name of the new Peasant : ");
         String name = input.nextLine();
         character.add_character(new Peasant(name, 2, 10, 4));
     }
 
     private void create_Mage() {
         Scanner input = new Scanner(System.in);
-        System.out.print("Enter the name of the new character : ");
+        System.out.print("Enter the name of the new Mage : ");
         String name = input.nextLine();
         character.add_character(new Mage(name, 2, 10, 4));
     }
 
-    public void display_submenu() {
-        Scanner input = new Scanner(System.in);
-        String choice = input.nextLine();
-        choseOptionSubMenu(choice);
+    public int display_submenu() {
+        System.out.print("\nWould you like to get detailed information about a specific character ? Y/N : ");
+        Scanner confirmChoice = new Scanner(System.in);
+        String choice = confirmChoice.nextLine();
+
+        if (choice.matches("(?i).*" + "yes|y" + ".*") ) getCharacterInformation();
+        else if (choice.matches("(?i).*" + "no|n" + ".*")) System.out.println("Exiting the list menu..");
+        return displayMenu();
     }
 
-    public void choseOptionSubMenu(String choice) {
-        switch(choice) {
-            case "Yes" -> {
-                Scanner input = new Scanner(System.in);
-                int index = Integer.parseInt(input.nextLine());
-                character.display_info(index);
-                display_submenu();
-            }
-            case "No" -> System.out.println("Exiting the list..");
+    public int getCharacterInformation() {
+        System.out.print("Please select the ID of the character you seek details : ");
+        Scanner optionID = new Scanner(System.in);
+
+        int characterID = Integer.parseInt(optionID.nextLine());
+        int verifiedID = character.doesCharacterExist(characterID);
+        if(verifiedID == -1) {
+            System.out.println("The character ID provided doesn't seem to exist.\n");
+            return getCharacterInformation();
         }
+
+        System.out.println(character.list.get(verifiedID));
+        return display_submenu();
     }
 
     public int menuRemove() {
@@ -77,7 +93,10 @@ public class Menu {
                 "Otherwise please select the ID of the character you want to remove : ");
 
         String option = input.nextLine();
-        if(option.matches("(?i).*" + "exit" + ".*")) return 0;
+        if(option.matches("(?i).*" + "exit" + ".*")) {
+            System.out.println("Exiting the remove option..");
+            return displayMenu();
+        }
 
         int characterID = Integer.parseInt(option);
         int verifiedID = character.doesCharacterExist(characterID);
@@ -95,7 +114,7 @@ public class Menu {
             System.out.println("Removing " + character.list.get(verifiedID) + " from the list..");
             character.removeCharacter(verifiedID);
         }
-        return 0;
+        return displayMenu();
     }
 
     public void fightToTheDeath() {
