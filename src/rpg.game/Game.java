@@ -6,7 +6,7 @@ public class Game {
         Menu menu = new Menu();
 
         for (int index = 0; index < 10; index++) {
-            menu.displayMenu();
+            menu.MenuWelcome();
         }
 
 
