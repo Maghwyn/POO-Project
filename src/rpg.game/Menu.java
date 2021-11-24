@@ -6,7 +6,8 @@ public class Menu {
     Character character = new Character();
 
     public void MenuWelcome() {
-        System.out.println("Welcome to the game !\nPlease select the options below to start the adventure.");
+        System.out.println("Welcome to the game !\n" +
+                "Please select the options below to start the adventure.");
         displayMenu();
     }
 
@@ -36,12 +37,8 @@ public class Menu {
             case 3 -> create_Mage();
             case 4 -> create_Peasant();
             case 5 -> menuRemove();
-            case 6 -> {
-                System.out.println("\nDisplaying the characters list..");
-                character.display_list();
-                display_submenu();
-            }
-            case 7 -> fightToTheDeath();
+            case 6 -> { character.display_list(); display_submenu(); }
+            case 7 -> fightForGlory();
             case 8 -> System.exit(0);
             case default -> System.out.println("Error.");
         }
@@ -60,31 +57,6 @@ public class Menu {
         System.out.print("Enter the name of the new Mage : ");
         String name = input.nextLine();
         character.add_character(new Mage(name, 2, 10, 4));
-    }
-
-    public int display_submenu() {
-        System.out.print("\nWould you like to get detailed information about a specific character ? Y/N : ");
-        Scanner confirmChoice = new Scanner(System.in);
-        String choice = confirmChoice.nextLine();
-
-        if (choice.matches("(?i).*" + "yes|y" + ".*") ) getCharacterInformation();
-        else if (choice.matches("(?i).*" + "no|n" + ".*")) System.out.println("Exiting the list menu..");
-        return displayMenu();
-    }
-
-    public int getCharacterInformation() {
-        System.out.print("Please select the ID of the character you seek details : ");
-        Scanner optionID = new Scanner(System.in);
-
-        int characterID = Integer.parseInt(optionID.nextLine());
-        int verifiedID = character.doesCharacterExist(characterID);
-        if(verifiedID == -1) {
-            System.out.println("The character ID provided doesn't seem to exist.\n");
-            return getCharacterInformation();
-        }
-
-        System.out.println(character.list.get(verifiedID));
-        return display_submenu();
     }
 
     public int menuRemove() {
@@ -117,41 +89,73 @@ public class Menu {
         return displayMenu();
     }
 
-    public void fightToTheDeath() {
-        Scanner input1 = new Scanner(System.in);
-        System.out.print("Chose your first fighter : ");
-        int fighter_index1 = Integer.parseInt(input1.nextLine());
-        Character fighter1 = character.choseWhoWillFight(fighter_index1);
+    public int display_submenu() {
+        System.out.print("\nWould you like to get detailed information about a specific character ? Y/N : ");
+        Scanner confirmChoice = new Scanner(System.in);
+        String choice = confirmChoice.nextLine();
 
-        Scanner input2 = new Scanner(System.in);
-        System.out.print("Chose your second fighter : ");
-        int fighter_index2 = Integer.parseInt(input2.nextLine());
-        Character fighter2 = character.choseWhoWillFight(fighter_index2);
+        if (choice.matches("(?i).*" + "yes|y" + ".*") ) getCharacterInformation();
+        else if (choice.matches("(?i).*" + "no|n" + ".*")) System.out.println("Exiting the list menu..");
+        return displayMenu();
+    }
 
+    public int getCharacterInformation() {
+        System.out.print("Please select the ID of the character you seek details : ");
+        Scanner optionID = new Scanner(System.in);
 
-        boolean turn = true;
-        while(fighter1.healthPoints > 0 || fighter2.healthPoints > 0) {
-            if(turn) {
-                int AD = fighter1.getAttackDamages();
-                fighter2.takeDamages(AD);
-                System.out.println("Fighter 2 remaining hp is " + fighter2.getHealthPoints());
-                turn = false;
+        int characterID = Integer.parseInt(optionID.nextLine());
+        int verifiedID = character.doesCharacterExist(characterID);
+        if(verifiedID == -1) {
+            System.out.println("The character ID provided doesn't seem to exist.\n");
+            return getCharacterInformation();
+        }
 
-                if(fighter2.healthPoints <= 0) {
-                    System.out.println("The winner is fighter 1.");
-                    break;
-                }
-            }else {
-                int AD = fighter2.getAttackDamages();
-                fighter1.takeDamages(AD);
-                System.out.println("Fighter 1 remaining hp is " + fighter1.getHealthPoints());
-                turn = true;
+        System.out.println(character.list.get(verifiedID));
+        return display_submenu();
+    }
 
-                if(fighter1.healthPoints <= 0) {
-                    System.out.println("The winner is fighter 2.");
-                    break;
-                }
+    public void fightForGlory() {
+        int selectedFighters = 0;
+        int[] verifiedID    = new int[2];
+        int[] healthPoints  = new int[2];
+        int[] initiative    = new int[2];
+        Character[] fighter = new Character[2];
+
+        while(selectedFighters != 2) {
+            if(selectedFighters == 0) System.out.print("Chose your first fighter : ");
+            if(selectedFighters == 1) System.out.print("Chose your second fighter : ");
+
+            Scanner thisFighter = new Scanner(System.in);
+            int characterID = Integer.parseInt(thisFighter.nextLine());
+            verifiedID[selectedFighters] = character.doesCharacterExist(characterID);
+            if(verifiedID[selectedFighters] == -1) {
+                System.out.println("The character ID provided doesn't seem to exist.\n");
+                continue;
             }
+
+            fighter[selectedFighters] = character.getFighter(characterID);
+            healthPoints[selectedFighters] = fighter[selectedFighters].getHealthPoints();
+            initiative[selectedFighters] = fighter[selectedFighters].getInitiative();
+            selectedFighters++;
+        }
+
+        boolean turn = initiative[0] > initiative[1];
+
+        while(healthPoints[0] > 0 || healthPoints[1] > 0) {
+            int attacker = turn ? 0 : 1;
+            int defender = turn ? 1 : 0;
+
+            int attackDamages = fighter[attacker].getAttackDamages();
+            fighter[defender].takeDamages(attackDamages);
+            int currentHealthPoints = fighter[defender].getHealthPoints();
+            System.out.println("Fighter " + defender + " remaining hp is " + currentHealthPoints);
+
+            if(currentHealthPoints <= 0) {
+                System.out.print("The winner of the confrontation is fighter " + attacker + " congratulation ! For now..\n");
+                character.removeCharacter(verifiedID[defender]);
+                break;
+            }
+            turn = !turn;
         }
     }
 }
