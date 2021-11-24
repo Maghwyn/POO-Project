@@ -25,11 +25,6 @@ public class Character {
     }
 
     private void attributeRandomIndex() {
-        //        int verify = list.indexOf(characterID);
-//        while(verify != -1) {
-//            characterID = (int) Math.floor(Math.random() * 100);
-//            verify = list.indexOf(characterID);
-//        }
         this.indexID = (int) Math.floor(Math.random() * 100);
     }
 
@@ -63,16 +58,13 @@ public class Character {
     }
 
     void display_list(){
+        System.out.println("\nDisplaying the characters list..");
         for (Object character : list){
             System.out.println(character);
         }
     }
 
-    public Character display_info(int ID) {
-        return list.get(ID);
-    }
-
-    public Character choseWhoWillFight(int index) {
+    public Character getFighter(int index) {
         for(Character character : list) {
             int IndexID = character.indexID;
             if(IndexID == index) {
