@@ -28,6 +28,10 @@ public class Character {
         this.indexID = (int) Math.floor(Math.random() * 100);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getAttackDamages() {
         return attackDamages;
     }
@@ -42,7 +46,6 @@ public class Character {
 
     public void takeDamages(int damages){
         this.healthPoints -= damages;
-        System.out.println(name + " took " + damages + " damages");
     }
 
     public String toString() {

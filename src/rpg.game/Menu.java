@@ -11,27 +11,32 @@ public class Menu {
         displayMenu();
     }
 
-    public int displayMenu(){
+    public void displayMenu(){
         System.out.print(
                 """
                                         
                 +-------------------------------+------------------------------+\s
-                |  1. Create Default Character  |  5. Remove A Character       |
-                |  2. Create Warrior Character  |  6. Display Characters List  |
-                |  3. Create Mage Character     |  7. Fight For Glory          |
-                |  4. Create Thief Character    |  8. Exit The Game            |
+                |  1. Create Default Character  |  6. Display Characters List  |
+                |  2. Create Warrior Character  |  7. Fight For Glory          |
+                |  3. Create Mage Character     |                              |
+                |  4. Create Thief Character    |  8. Display Menu             |
+                |  5. Remove Character          |  9. Exit the Game            |
                 +-------------------------------+------------------------------+\s
                 """
         );
 
+        awaitChoice();
+    }
+
+    public int awaitChoice() {
         System.out.print("Your choice : ");
         Scanner input = new Scanner(System.in);
         int inputChoice = Integer.parseInt(input.nextLine());
         return choseOption(inputChoice);
     }
 
-    public int choseOption(int input){
-        switch (input){
+    public int choseOption(int choice) {
+        switch (choice){
             case 1 -> create_Peasant();
             case 2 -> create_Peasant();
             case 3 -> create_Mage();
@@ -39,10 +44,11 @@ public class Menu {
             case 5 -> menuRemove();
             case 6 -> { character.display_list(); display_submenu(); }
             case 7 -> fightForGlory();
-            case 8 -> System.exit(0);
+            case 8 -> displayMenu();
+            case 9 -> System.exit(0);
             case default -> System.out.println("Error.");
         }
-        return displayMenu();
+        return awaitChoice();
     }
 
     private void create_Peasant() {
@@ -67,7 +73,7 @@ public class Menu {
         String option = input.nextLine();
         if(option.matches("(?i).*" + "exit" + ".*")) {
             System.out.println("Exiting the remove option..");
-            return displayMenu();
+            return awaitChoice();
         }
 
         int characterID = Integer.parseInt(option);
@@ -86,7 +92,7 @@ public class Menu {
             System.out.println("Removing " + character.list.get(verifiedID) + " from the list..");
             character.removeCharacter(verifiedID);
         }
-        return displayMenu();
+        return awaitChoice();
     }
 
     public int display_submenu() {
@@ -96,7 +102,7 @@ public class Menu {
 
         if (choice.matches("(?i).*" + "yes|y" + ".*") ) getCharacterInformation();
         else if (choice.matches("(?i).*" + "no|n" + ".*")) System.out.println("Exiting the list menu..");
-        return displayMenu();
+        return awaitChoice();
     }
 
     public int getCharacterInformation() {
@@ -119,6 +125,7 @@ public class Menu {
         int[] verifiedID    = new int[2];
         int[] healthPoints  = new int[2];
         int[] initiative    = new int[2];
+        String[] name       = new String[2];
         Character[] fighter = new Character[2];
 
         while(selectedFighters != 2) {
@@ -136,8 +143,12 @@ public class Menu {
             fighter[selectedFighters] = character.getFighter(characterID);
             healthPoints[selectedFighters] = fighter[selectedFighters].getHealthPoints();
             initiative[selectedFighters] = fighter[selectedFighters].getInitiative();
+            name[selectedFighters] = fighter[selectedFighters].getName();
             selectedFighters++;
         }
+
+        System.out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
+                "-------------------------------------------------");
 
         boolean turn = initiative[0] > initiative[1];
 
@@ -148,10 +159,13 @@ public class Menu {
             int attackDamages = fighter[attacker].getAttackDamages();
             fighter[defender].takeDamages(attackDamages);
             int currentHealthPoints = fighter[defender].getHealthPoints();
-            System.out.println("Fighter " + defender + " remaining hp is " + currentHealthPoints);
+
+            System.out.println("\n" + name[defender] + " took " + attackDamages + " damages");
+            System.out.println(name[defender] + " remaining hp is " + currentHealthPoints);
 
             if(currentHealthPoints <= 0) {
-                System.out.print("The winner of the confrontation is fighter " + attacker + " congratulation ! For now..\n");
+                System.out.println("-------------------------------------------------");
+                System.out.print("The winner of the confrontation is " + name[attacker] + ", congratulation ! For now..\n");
                 character.removeCharacter(verifiedID[defender]);
                 break;
             }
