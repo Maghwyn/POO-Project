@@ -76,10 +76,69 @@ public class Character {
             }
         }
     }
+
+    public Character choseWhoWillFight(int index) {
+        for(Character character : list) {
+            int IndexID = character.indexID;
+            if(IndexID == index) {
+                return character;
+            }
+        }
+        return null;
+    }
 }
 
-class Peasant extends Character{
+class Peasant extends Character {
     public Peasant(String name, int attackDamages, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
+    }
+}
+
+class Warrior extends Character {
+    public Warrior(String name, int attackDamages, int healthPoints, int initiative) {
+        super(name, attackDamages, healthPoints, initiative);
+    }
+
+    void Bouclier() {
+        //SO basically, it's a barrier where if the number of the shield is hight enought then it means
+        //The attack is nullified, might want to check that one once the attack is launched or something.
+        //Rather than doing it manually inside the attack.
+    }
+}
+
+class Mage extends Character {
+    int magicAttack;
+    public Mage(String name, int attackDamages, int healthPoints, int initiative) {
+        super(name, attackDamages, healthPoints, initiative);
+    }
+
+    void Magic() {
+        //Somehow have to add some magic damage to it.
+    }
+}
+
+class Thief extends Character {
+    public Thief(String name, int attackDamages, int healthPoints, int initiative) {
+        super(name, attackDamages, healthPoints, initiative);
+    }
+
+    void Miss() {
+        //For this much probability, cancel an attack.
+        //Return a miss or nothing, this will return the attack to null basically.
+    }
+
+    void critical() {
+        //For this much probability, multiply the damage by 2.
+        //Return a buffed AD for this turn only.
+        //You might want to add a CD on each crit.
+    }
+}
+
+class nothing {
+    void DeletingACharacter() {
+        //Basically all we need to do is remove an existing array and sort it back to fit the array.
+        //Perhaps it's possible to stock an array an empty the existing one, then add everything back to it.
+        //From the menu perspective, we need to confirm whether or not we want to delete this character.
+        //Once confirmed, we need to print this deleted character.
     }
 }
