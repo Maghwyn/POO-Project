@@ -86,6 +86,21 @@ public class Character {
         }
         return null;
     }
+
+    void removeCharacter(int characterID) {
+        list.remove(characterID);
+    }
+
+    int doesCharacterExist(int characterID) {
+        for(Character character : list) {
+            int IndexID = character.indexID;
+            if(IndexID == characterID) {
+                return list.indexOf(character);
+            }
+        }
+        return -1;
+    }
+
 }
 
 class Peasant extends Character {
@@ -122,7 +137,7 @@ class Thief extends Character {
         super(name, attackDamages, healthPoints, initiative);
     }
 
-    void Miss() {
+    void miss() {
         //For this much probability, cancel an attack.
         //Return a miss or nothing, this will return the attack to null basically.
     }
@@ -131,14 +146,5 @@ class Thief extends Character {
         //For this much probability, multiply the damage by 2.
         //Return a buffed AD for this turn only.
         //You might want to add a CD on each crit.
-    }
-}
-
-class nothing {
-    void DeletingACharacter() {
-        //Basically all we need to do is remove an existing array and sort it back to fit the array.
-        //Perhaps it's possible to stock an array an empty the existing one, then add everything back to it.
-        //From the menu perspective, we need to confirm whether or not we want to delete this character.
-        //Once confirmed, we need to print this deleted character.
     }
 }
