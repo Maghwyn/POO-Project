@@ -68,13 +68,8 @@ public class Character {
         }
     }
 
-    void display_info(int index) {
-        for(Character character : list) {
-            int IndexID = character.indexID;
-            if(IndexID == index) {
-                System.out.println(character);
-            }
-        }
+    public Character display_info(int ID) {
+        return list.get(ID);
     }
 
     public Character choseWhoWillFight(int index) {
