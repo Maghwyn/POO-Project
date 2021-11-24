@@ -13,7 +13,8 @@ public class Menu {
         System.out.println("4. Create Mage Character");
         System.out.println("5. Create Thief Character");
         System.out.println("6. Display List");
-        System.out.println("7. Fight.");
+        System.out.println("7. Remove A Character");
+        System.out.println("8. Fight.");
 
         Scanner input = new Scanner(System.in);
         int inputChoice = Integer.parseInt(input.nextLine());
@@ -32,7 +33,8 @@ public class Menu {
                 character.display_list();
                 display_submenu();
             }
-            case 7 -> { fightToTheDeath(); }
+            case 7 -> menuRemove();
+            case 8 -> fightToTheDeath();
             case default -> System.out.println("Error.");
         }
     }
@@ -69,9 +71,35 @@ public class Menu {
         }
     }
 
+    public int menuRemove() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("If you wish to cancel the operation, please type : exit\n" +
+                "Otherwise please select the ID of the character you want to remove : ");
+
+        String option = input.nextLine();
+        if(option.matches("(?i).*" + "exit" + ".*")) return 0;
+
+        int characterID = Integer.parseInt(option);
+        int verifiedID = character.doesCharacterExist(characterID);
+        if(verifiedID == -1) {
+            System.out.println("The character ID provided doesn't seem to exist.\n");
+            return menuRemove();
+        }
+
+        Scanner warningConfirmation = new Scanner(System.in);
+        System.out.print("Are you sure you want to delete this character ? Y/N : ");
+
+        String confirmChoice = warningConfirmation.nextLine();
+        if(confirmChoice.matches("(?i).*" + "no|n" + ".*")) return menuRemove();
+        else if (confirmChoice.matches("(?i).*" + "yes|y" + ".*")) {
+            System.out.println("Removing " + character.list.get(verifiedID) + " from the list..");
+            character.removeCharacter(verifiedID);
+        }
+        return 0;
+    }
 
     public void fightToTheDeath() {
-        Scanner input1= new Scanner(System.in);
+        Scanner input1 = new Scanner(System.in);
         System.out.print("Chose your first fighter : ");
         int fighter_index1 = Integer.parseInt(input1.nextLine());
         Character fighter1 = character.choseWhoWillFight(fighter_index1);
