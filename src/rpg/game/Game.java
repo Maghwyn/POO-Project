@@ -2,6 +2,7 @@ package rpg.game;
 
 public class Game {
     public static void main(String[] args) {
-        System.out.println("Hello");
+        Menu menu = new Menu();
+        menu.displayMenu();
     }
 }
