@@ -1,5 +1,6 @@
 package rpg.game;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Menu {
@@ -29,7 +30,7 @@ public class Menu {
     }
 
     public int awaitChoice() {
-        System.out.print("Your choice : ");
+        System.out.print("\nYour choice : ");
         Scanner input = new Scanner(System.in);
         int inputChoice = Integer.parseInt(input.nextLine());
         return choseOption(inputChoice);
@@ -56,10 +57,10 @@ public class Menu {
         Scanner new_character = new Scanner(System.in);
         String name = new_character.nextLine();
 
-        if(role.equals("Peasant")) character.add_character(new Peasant(name, 2, 10, 4));
-        if(role.equals("Warrior")) character.add_character(new Warrior(name, 2, 10, 4));
-        if(role.equals("Mage"))    character.add_character(new Mage   (name, 2, 10, 4));
-        if(role.equals("Thief"))   character.add_character(new Thief  (name, 2, 10, 4));
+        if(role.equals("Peasant")) character.add_character(new Peasant(name, 3, 10, 3));
+        if(role.equals("Warrior")) character.add_character(new Warrior(name, 5, 3, 20, 1));
+        if(role.equals("Mage"))    character.add_character(new Mage   (name, 2, 8, 13, 2));
+        if(role.equals("Thief"))   character.add_character(new Thief  (name, 4, 0.7f,15, 0.3f, 4));
     }
 
     public int menuRemove() {
@@ -123,6 +124,7 @@ public class Menu {
         int[] healthPoints  = new int[2];
         int[] initiative    = new int[2];
         String[] name       = new String[2];
+        String[] className  = new String[2];
         Character[] fighter = new Character[2];
 
         while(selectedFighters != 2) {
@@ -140,10 +142,12 @@ public class Menu {
             fighter[selectedFighters] = character.getFighter(characterID);
             healthPoints[selectedFighters] = fighter[selectedFighters].getHealthPoints();
             initiative[selectedFighters] = fighter[selectedFighters].getInitiative();
-            name[selectedFighters] = fighter[selectedFighters].getName();
+            name[selectedFighters] = fighter[selectedFighters].getCharacterName();
+            className[selectedFighters] = fighter[selectedFighters].getClassName();
             selectedFighters++;
         }
 
+        System.out.println(className[0] + " " + className[1]);
         System.out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
                 "-------------------------------------------------");
 
@@ -152,12 +156,27 @@ public class Menu {
         while(healthPoints[0] > 0 || healthPoints[1] > 0) {
             int attacker = turn ? 0 : 1;
             int defender = turn ? 1 : 0;
+            int damage = 0;
 
-            int attackDamages = fighter[attacker].getAttackDamages();
-            fighter[defender].takeDamages(attackDamages);
+            if     (Objects.equals(className[attacker], "Peasant")) damage = fighter[attacker].getAttackDamages();
+            else if(Objects.equals(className[attacker], "Warrior")) damage = fighter[attacker].getAttackDamages();
+            else if(Objects.equals(className[attacker], "Mage"))    damage = fighter[attacker].getEnhancedDamages();
+            else if(Objects.equals(className[attacker], "Thief"))   damage = fighter[attacker].getAttackDamages();
+
+            if(Objects.equals(className[defender], "Warrior")) {
+                int shield = fighter[defender].getShield();
+                damage = damage - shield;
+                if(damage <= 0) System.out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
+                else {
+                    fighter[defender].takeDamages(damage);
+                    System.out.println("\n" + name[defender] + " took " + damage + " damages");
+                }
+            } else {
+                fighter[defender].takeDamages(damage);
+                System.out.println("\n" + name[defender] + " took " + damage + " damages");
+            }
+
             int currentHealthPoints = fighter[defender].getHealthPoints();
-
-            System.out.println("\n" + name[defender] + " took " + attackDamages + " damages");
             System.out.println(name[defender] + " remaining hp is " + currentHealthPoints);
 
             if(currentHealthPoints <= 0) {
@@ -166,6 +185,7 @@ public class Menu {
                 character.removeCharacter(verifiedID[defender]);
                 break;
             }
+            
             turn = !turn;
         }
     }

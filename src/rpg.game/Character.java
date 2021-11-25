@@ -1,11 +1,18 @@
 package rpg.game;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Character {
+    String className;
     String name;
     int attackDamages;
+    int magicDamages;
+    int shield;
+    float criticalChance;
+    float agility;
     int healthPoints;
     int initiative;
     int indexID;
@@ -16,11 +23,38 @@ public class Character {
 
     }
 
-    public Character(String name, int attackDamages, int healthPoints, int initiative){
-        this.name = name;
+    public Character(String name, int attackDamages, int healthPoints, int initiative) {
+        this.className     = "Peasant";
+        this.name          = name;
         this.attackDamages = attackDamages;
-        this.healthPoints = healthPoints;
-        this.initiative = initiative;
+        this.healthPoints  = healthPoints;
+        this.initiative    = initiative;
+        attributeRandomIndex();
+    }
+
+    public Character(String name, int attackDamages, int specialAbilities, int healthPoints, int initiative){
+        if(attackDamages > 5) {
+            this.className    = "Warrior";
+            this.shield       = specialAbilities;
+        } else {
+            this.className    = "Mage";
+            this.magicDamages = specialAbilities;
+        }
+        this.name          = name;
+        this.attackDamages = attackDamages;
+        this.healthPoints  = healthPoints;
+        this.initiative    = initiative;
+        attributeRandomIndex();
+    }
+
+    public Character(String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
+        this.className      = "Thief";
+        this.name           = name;
+        this.attackDamages  = attackDamages;
+        this.criticalChance = criticalChance;
+        this.healthPoints   = healthPoints;
+        this.agility        = agility;
+        this.initiative     = initiative;
         attributeRandomIndex();
     }
 
@@ -28,12 +62,27 @@ public class Character {
         this.indexID = (int) Math.floor(Math.random() * 100);
     }
 
-    public String getName() {
+    public String getCharacterName() {
         return name;
+    }
+
+    public String getClassName() {
+        return className;
     }
 
     public int getAttackDamages() {
         return attackDamages;
+    }
+
+    public int getShield() {
+        return shield;
+    }
+
+    public int getEnhancedDamages() {
+        int enhancedDamages = attackDamages + magicDamages;
+        magicDamages = magicDamages/2;
+        if(magicDamages == 0) magicDamages = 1;
+        return enhancedDamages;
     }
 
     public int getHealthPoints() {
@@ -49,7 +98,7 @@ public class Character {
     }
 
     public String toString() {
-        return "{ " + indexID + ": Peasant{" + "name = '" + name + '\'' +
+        return "CharacterID : " + indexID + ", Archetype : Peasant{" + "name = '" + name + '\'' +
                 ", AD = " + attackDamages +
                 ", HP = " + healthPoints +
                 ", Speed = " + initiative +
@@ -90,7 +139,6 @@ public class Character {
         }
         return -1;
     }
-
 }
 
 class Peasant extends Character {
@@ -100,41 +148,19 @@ class Peasant extends Character {
 }
 
 class Warrior extends Character {
-    public Warrior(String name, int attackDamages, int healthPoints, int initiative) {
-        super(name, attackDamages, healthPoints, initiative);
-    }
-
-    void Bouclier() {
-        //SO basically, it's a barrier where if the number of the shield is hight enought then it means
-        //The attack is nullified, might want to check that one once the attack is launched or something.
-        //Rather than doing it manually inside the attack.
+    public Warrior(String name, int attackDamages, int shield, int healthPoints, int initiative) {
+        super(name, attackDamages, shield, healthPoints, initiative);
     }
 }
 
 class Mage extends Character {
-    int magicAttack;
-    public Mage(String name, int attackDamages, int healthPoints, int initiative) {
-        super(name, attackDamages, healthPoints, initiative);
-    }
-
-    void Magic() {
-        //Somehow have to add some magic damage to it.
+    public Mage(String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
+        super(name, attackDamages, magicDamages, healthPoints, initiative);
     }
 }
 
 class Thief extends Character {
-    public Thief(String name, int attackDamages, int healthPoints, int initiative) {
-        super(name, attackDamages, healthPoints, initiative);
-    }
-
-    void miss() {
-        //For this much probability, cancel an attack.
-        //Return a miss or nothing, this will return the attack to null basically.
-    }
-
-    void critical() {
-        //For this much probability, multiply the damage by 2.
-        //Return a buffed AD for this turn only.
-        //You might want to add a CD on each crit.
+    public Thief(String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
+        super(name, attackDamages, criticalChance, healthPoints, agility, initiative);
     }
 }
