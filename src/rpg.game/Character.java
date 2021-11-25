@@ -1,5 +1,6 @@
 package rpg.game;
 
+import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,11 +125,19 @@ public class Character {
     }
 
     public String toString() {
-        return "CharacterID : " + indexID + ", Archetype : Peasant{" + "name = '" + name + '\'' +
-                ", AD = " + attackDamages +
-                ", HP = " + healthPoints +
-                ", Speed = " + initiative +
-                "}}";
+        return """
+                +------------------------+---------------------+
+                |  IndexID = None        |                     |
+                |  Archetype = None      |  Name = None        |
+                |                        |                     |
+                |  AttackDamages = None  |  Initiative = None  |
+                |  HealthPoint = None    |                     |
+                +------------------------+---------------------+
+                """;
+    }
+
+    public String IndexType() {
+        return "CharacterID : " + indexID + " => Archetype : None";
     }
 
     public void add_character(Character new_character){
@@ -137,8 +146,8 @@ public class Character {
 
     void display_list(){
         System.out.println("\nDisplaying the characters list..");
-        for (Object character : list){
-            System.out.println(character);
+        for (Character character : list){
+            System.out.println(character.IndexType());
         }
     }
 
@@ -168,16 +177,25 @@ public class Character {
 }
 
 class Peasant extends Character {
+
     public Peasant(String name, int attackDamages, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
     }
 
+    public String IndexType() {
+        return "CharacterID : " + indexID + " => Archetype : Peasant";
+    }
+
     public String toString() {
-        return "CharacterID : " + indexID + ", Archetype : Peasant{" + "name = '" + name + '\'' +
-                ", AD = " + attackDamages +
-                ", HP = " + healthPoints +
-                ", Speed = " + initiative +
-                "}}";
+        return  "+-----------------------+-----------------------+\n" +
+                "|  Archetype = " + className + "  "                  +
+                "|  IndexID = " + indexID +               "       \n" +
+                "|  Name = " + name + "                           \n" +
+                "|                                                \n" +
+                "|  AttackDamages = " + attackDamages + "         \n" +
+                "|  HealthPoint   = " + healthPoints + "          \n" +
+                "|  Initiative    = " + initiative + "            \n" +
+                "+-----------------------------------------------+\n";
     }
 }
 
@@ -186,12 +204,21 @@ class Warrior extends Character {
         super(name, attackDamages, shield, healthPoints, initiative);
     }
 
+    public String IndexType() {
+        return "CharacterID : " + indexID + " => Archetype : Warrior";
+    }
+
     public String toString() {
-        return "CharacterID : " + indexID + ", Archetype : Warrior{" + "name = '" + name + '\'' +
-                ", AD = " + attackDamages +
-                ", HP = " + healthPoints +
-                ", Speed = " + initiative +
-                "}}";
+        return  "+-----------------------+-----------------------+\n" +
+                "|  Archetype = " + className + "  "                  +
+                "|  IndexID = " + indexID +               "       \n" +
+                "|  Name = " + name + "                           \n" +
+                "|                                                \n" +
+                "|  AttackDamages = " + attackDamages + "         \n" +
+                "|  HealthPoint   = " + healthPoints + "          \n" +
+                "|  Initiative    = " + initiative + "            \n" +
+                "|  Shield        = " + shield + "                \n" +
+                "+-----------------------------------------------+\n";
     }
 }
 
@@ -200,12 +227,21 @@ class Mage extends Character {
         super(name, attackDamages, magicDamages, healthPoints, initiative);
     }
 
+    public String IndexType() {
+        return "CharacterID : " + indexID + " => Archetype : Mage";
+    }
+
     public String toString() {
-        return "CharacterID : " + indexID + ", Archetype : Mage{" + "name = '" + name + '\'' +
-                ", AD = " + attackDamages +
-                ", HP = " + healthPoints +
-                ", Speed = " + initiative +
-                "}}";
+        return  "+-----------------------+-----------------------+\n" +
+                "|  Archetype = " + className + "  "                  +
+                "|  IndexID = " + indexID +               "       \n" +
+                "|  Name = " + name + "                           \n" +
+                "|                                                \n" +
+                "|  AttackDamages = " + attackDamages + "         \n" +
+                "|  MagicDamages  = " + magicDamages + "         4 \n" +
+                "|  HealthPoint   = " + healthPoints + "          \n" +
+                "|  Initiative    = " + initiative + "            \n" +
+                "+-----------------------------------------------+\n";
     }
 }
 
@@ -214,11 +250,21 @@ class Thief extends Character {
         super(name, attackDamages, criticalChance, healthPoints, agility, initiative);
     }
 
+    public String IndexType() {
+        return "CharacterID : " + indexID + " => Archetype : Thief";
+    }
+
     public String toString() {
-        return "CharacterID : " + indexID + ", Archetype : Thief{" + "name = '" + name + '\'' +
-                ", AD = " + attackDamages +
-                ", HP = " + healthPoints +
-                ", Speed = " + initiative +
-                "}}";
+        return  "+-----------------------+-----------------------+\n" +
+                "|  Archetype = " + className + "  "                  +
+                "|  IndexID = " + indexID +               "       \n" +
+                "|  Name = " + name + "                           \n" +
+                "|                                                \n" +
+                "|  AttackDamages = " + attackDamages + "         \n" +
+                "|  HealthPoint   = " + healthPoints + "          \n" +
+                "|  Initiative    = " + initiative + "            \n" +
+                "|  CritChance    = " + criticalChance + "        \n" +
+                "|  Agility       = " + agility + "               \n" +
+                "+-----------------------------------------------+\n";
     }
 }
