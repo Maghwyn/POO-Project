@@ -185,7 +185,7 @@ public class Menu {
                 character.removeCharacter(verifiedID[defender]);
                 break;
             }
-            
+
             turn = !turn;
         }
     }
