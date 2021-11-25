@@ -20,11 +20,12 @@ public class Menu {
                 """
                                         
                 +-------------------------------+------------------------------+\s
-                |  1. Create Default Character  |  6. Display Characters List  |
-                |  2. Create Warrior Character  |  7. Fight For Glory          |
-                |  3. Create Mage Character     |                              |
-                |  4. Create Thief Character    |  8. Display Menu             |
-                |  5. Remove Character          |  9. Exit the Game            |
+                |  1. Create Default Character  |  7. Fight For Glory          |
+                |  2. Create Warrior Character  |                              |
+                |  3. Create Mage Character     |  8. Display Menu             |
+                |  4. Create Thief Character    |  9. Save The Game            |
+                |  5. Remove Character          |  10. Load Game Save          |
+                |  6. Display Characters List   |  11. Exit The Game           |
                 +-------------------------------+------------------------------+\s
                 """
         );
@@ -50,10 +51,21 @@ public class Menu {
             case 6 -> { character.display_list(); display_submenu(); }
             case 7 -> fightForGlory();
             case 8 -> displayMenu();
-            case 9 -> exit(0);
+            case 9 -> saveGame();
+            case 10 -> loadGame();
+            case 11 -> exit(0);
             case default -> out.println("Error.");
         }
         return awaitChoice();
+    }
+
+    public void saveGame() {
+        SaveManager.saveForEach(character);
+    }
+
+    public void loadGame() {
+        String JSON = SaveManager.readFile();
+        SaveManager.processingExtraction(JSON, character);
     }
 
     private void createCharacter(String role) {

@@ -1,21 +1,25 @@
 package rpg.game;
 
-import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
+
+
+interface inProgress {
+
+}
 
 public class Character {
     String className;
     String name;
+    int indexID;
+    int healthPoints;
     int attackDamages;
     int magicDamages;
     int shield;
+    int initiative;
+    float agility;
     float criticalChance;
     boolean isCritical = true;
-    float agility;
-    int healthPoints;
-    int initiative;
-    int indexID;
 
     List<Character> list = new ArrayList<>();
 
@@ -69,41 +73,17 @@ public class Character {
         this.indexID = random;
     }
 
-    public String getCharacterName() {
-        return name;
-    }
-
-    public boolean isCritical() {
-        return isCritical;
-    }
-
-    public void disableCritical() {
-        isCritical = false;
-    }
-
-    public void enableCritical() {
-        isCritical = true;
+    public void add_character(Character new_character){
+        list.add(new_character);
     }
 
     public String getClassName() {
         return className;
     }
-
-    public int getAttackDamages() {
-        return attackDamages;
-    }
-
-    public int getShield() {
-        return shield;
-    }
-
-    public float getCriticalChance() {
-        return criticalChance;
-    }
-
-    public float getAgility() {
-        return agility;
-    }
+    public String getCharacterName() { return name; }
+    public int getHealthPoints() { return healthPoints; }
+    public int getAttackDamages() {  return attackDamages; }
+    public int getInitiative() { return initiative; }
 
     public int getEnhancedDamages() {
         int enhancedDamages = attackDamages + magicDamages;
@@ -112,16 +92,58 @@ public class Character {
         return enhancedDamages;
     }
 
-    public int getHealthPoints() {
-        return healthPoints;
+    public int getShield() {
+        return shield;
+    }
+    public float getAgility() {
+        return agility;
+    }
+    public float getCriticalChance() {
+        return criticalChance;
+    }
+    public boolean isCritical() {
+        return isCritical;
+    }
+    public void disableCritical() {
+        isCritical = false;
+    }
+    public void enableCritical() {
+        isCritical = true;
     }
 
-    public int getInitiative() {
-        return initiative;
+    public Character getFighter(int index) {
+        for(Character character : list) {
+            int IndexID = character.indexID;
+            if(IndexID == index) {
+                return character;
+            }
+        }
+        return null;
     }
 
     public void takeDamages(int damages){
         this.healthPoints -= damages;
+    }
+
+    int doesCharacterExist(int characterID) {
+        for(Character character : list) {
+            int IndexID = character.indexID;
+            if(IndexID == characterID) {
+                return list.indexOf(character);
+            }
+        }
+        return -1;
+    }
+
+    void removeCharacter(int characterID) {
+        list.remove(characterID);
+    }
+
+    void display_list(){
+        System.out.println("\nDisplaying the characters list..");
+        for (Character character : list){
+            System.out.println(character.IndexType());
+        }
     }
 
     public String toString() {
@@ -140,39 +162,10 @@ public class Character {
         return "CharacterID : " + indexID + " => Archetype : None";
     }
 
-    public void add_character(Character new_character){
-        list.add(new_character);
-    }
-
-    void display_list(){
-        System.out.println("\nDisplaying the characters list..");
-        for (Character character : list){
-            System.out.println(character.IndexType());
-        }
-    }
-
-    public Character getFighter(int index) {
-        for(Character character : list) {
-            int IndexID = character.indexID;
-            if(IndexID == index) {
-                return character;
-            }
-        }
-        return null;
-    }
-
-    void removeCharacter(int characterID) {
-        list.remove(characterID);
-    }
-
-    int doesCharacterExist(int characterID) {
-        for(Character character : list) {
-            int IndexID = character.indexID;
-            if(IndexID == characterID) {
-                return list.indexOf(character);
-            }
-        }
-        return -1;
+    public String convertToJSON() {
+        return "{" + indexID + ": " + className +
+                "{name:" + name + ", attackDamages:" + attackDamages +
+                ", healthPoints:" + healthPoints + ", initiative:" + initiative + "}}";
     }
 }
 
@@ -197,6 +190,12 @@ class Peasant extends Character {
                 "|  Initiative    = " + initiative + "            \n" +
                 "+-----------------------------------------------+\n";
     }
+
+    public String convertToJSON() {
+        return indexID + ":" + className +
+                "=>name:" + name + ",attackDamages:" + attackDamages +
+                ",healthPoints:" + healthPoints + ",initiative:" + initiative;
+    }
 }
 
 class Warrior extends Character {
@@ -219,6 +218,12 @@ class Warrior extends Character {
                 "|  Initiative    = " + initiative + "            \n" +
                 "|  Shield        = " + shield + "                \n" +
                 "+-----------------------------------------------+\n";
+    }
+
+    public String convertToJSON() {
+        return indexID + ":" + className +
+                "=>name:" + name + ",attackDamages:" + attackDamages +
+                ",healthPoints:" + healthPoints + ",initiative:" + initiative + ",shield:" + shield;
     }
 }
 
@@ -243,6 +248,12 @@ class Mage extends Character {
                 "|  Initiative    = " + initiative + "            \n" +
                 "+-----------------------------------------------+\n";
     }
+
+    public String convertToJSON() {
+        return indexID + ":" + className +
+                "=>name:" + name + ",attackDamages:" + attackDamages + ",magicDamages:" + magicDamages +
+                ",healthPoints:" + healthPoints + ",initiative:" + initiative;
+    }
 }
 
 class Thief extends Character {
@@ -266,5 +277,12 @@ class Thief extends Character {
                 "|  CritChance    = " + criticalChance + "        \n" +
                 "|  Agility       = " + agility + "               \n" +
                 "+-----------------------------------------------+\n";
+    }
+
+    public String convertToJSON() {
+        return indexID + ":" + className +
+                "=>name:" + name + ",attackDamages:" + attackDamages +
+                ",healthPoints:" + healthPoints + ",initiative:" + initiative +
+                ",critchance:" + criticalChance + ",agility:" + agility;
     }
 }
