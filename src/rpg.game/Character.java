@@ -1,7 +1,5 @@
 package rpg.game;
 
-import org.w3c.dom.ls.LSOutput;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +10,7 @@ public class Character {
     int magicDamages;
     int shield;
     float criticalChance;
+    boolean isCritical = true;
     float agility;
     int healthPoints;
     int initiative;
@@ -33,7 +32,7 @@ public class Character {
     }
 
     public Character(String name, int attackDamages, int specialAbilities, int healthPoints, int initiative){
-        if(attackDamages > 5) {
+        if(attackDamages >= 5) {
             this.className    = "Warrior";
             this.shield       = specialAbilities;
         } else {
@@ -66,6 +65,18 @@ public class Character {
         return name;
     }
 
+    public boolean isCritical() {
+        return isCritical;
+    }
+
+    public void disableCritical() {
+        isCritical = false;
+    }
+
+    public void enableCritical() {
+        isCritical = true;
+    }
+
     public String getClassName() {
         return className;
     }
@@ -76,6 +87,14 @@ public class Character {
 
     public int getShield() {
         return shield;
+    }
+
+    public float getCriticalChance() {
+        return criticalChance;
+    }
+
+    public float getAgility() {
+        return agility;
     }
 
     public int getEnhancedDamages() {
