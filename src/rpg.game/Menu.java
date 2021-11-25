@@ -29,13 +29,7 @@ public class Menu {
                 """
         );
 
-
-        float CD = 0.5f;
-        float chance = new Random().nextFloat();
-        out.println(chance);
-        boolean hello = chance <= CD;
-        out.println(hello);
-
+        // !input.hasNext("^[A-Za-z]+$")
         awaitChoice();
     }
 
