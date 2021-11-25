@@ -3,6 +3,7 @@ package rpg.game;
 import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Character {
     String className;
@@ -16,6 +17,7 @@ public class Character {
     int healthPoints;
     int initiative;
     int indexID;
+    int index;
 
     List<Character> list = new ArrayList<>();
 
@@ -32,12 +34,12 @@ public class Character {
         attributeRandomIndex();
     }
 
-    public Character(String name, int attackDamages, int specialAbilities, int healthPoints, int initiative){
-        if(attackDamages >= 5) {
-            this.className    = "Warrior";
+    public Character(String role, String name, int attackDamages, int specialAbilities, int healthPoints, int initiative){
+        if(Objects.equals(role, "Warrior")){
+            this.className = role;
             this.shield       = specialAbilities;
         } else {
-            this.className    = "Mage";
+            this.className    = role;
             this.magicDamages = specialAbilities;
         }
         this.name          = name;
@@ -46,6 +48,7 @@ public class Character {
         this.initiative    = initiative;
         attributeRandomIndex();
     }
+
 
     public Character(String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
         this.className      = "Thief";
@@ -57,6 +60,18 @@ public class Character {
         this.initiative     = initiative;
         attributeRandomIndex();
     }
+
+    public Character(String name, int attackDamages, int magicDamages, int shield, int healthPoints, int initiative) {
+        this.className      = "WarriorMage";
+        this.name           = name;
+        this.attackDamages  = attackDamages;
+        this.shield         = shield;
+        this.healthPoints   = healthPoints;
+        this.magicDamages   = magicDamages;
+        this.initiative     = initiative;
+        attributeRandomIndex();
+    }
+
 
     private void attributeRandomIndex() {
         int random = (int) Math.floor(Math.random() * 100);
@@ -200,8 +215,8 @@ class Peasant extends Character {
 }
 
 class Warrior extends Character {
-    public Warrior(String name, int attackDamages, int shield, int healthPoints, int initiative) {
-        super(name, attackDamages, shield, healthPoints, initiative);
+    public Warrior(String role, String name, int attackDamages, int shield, int healthPoints, int initiative) {
+        super(role, name, attackDamages, shield, healthPoints, initiative);
     }
 
     public String IndexType() {
@@ -223,8 +238,8 @@ class Warrior extends Character {
 }
 
 class Mage extends Character {
-    public Mage(String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
-        super(name, attackDamages, magicDamages, healthPoints, initiative);
+    public Mage(String role,  String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
+        super(role, name, attackDamages, magicDamages, healthPoints, initiative);
     }
 
     public String IndexType() {
@@ -238,7 +253,7 @@ class Mage extends Character {
                 "|  Name = " + name + "                           \n" +
                 "|                                                \n" +
                 "|  AttackDamages = " + attackDamages + "         \n" +
-                "|  MagicDamages  = " + magicDamages + "         4 \n" +
+                "|  MagicDamages  = " + magicDamages + "          \n" +
                 "|  HealthPoint   = " + healthPoints + "          \n" +
                 "|  Initiative    = " + initiative + "            \n" +
                 "+-----------------------------------------------+\n";
@@ -265,6 +280,30 @@ class Thief extends Character {
                 "|  Initiative    = " + initiative + "            \n" +
                 "|  CritChance    = " + criticalChance + "        \n" +
                 "|  Agility       = " + agility + "               \n" +
+                "+-----------------------------------------------+\n";
+    }
+}
+
+class WarriorMage extends Character {
+    public WarriorMage (String name, int attackDamages, int magicDamages, int shield, int healthPoints, int initiative) {
+        super(name, attackDamages, magicDamages, shield, healthPoints, initiative);
+    }
+
+    public String IndexType() {
+        return "CharacterID : " + indexID + " => Archetype : Warrior-Mage";
+    }
+
+    public String toString() {
+        return  "+-----------------------+-----------------------+\n" +
+                "|  Archetype = " + className + "  "                  +
+                "|  IndexID = " + indexID +               "       \n" +
+                "|  Name = " + name + "                           \n" +
+                "|                                                \n" +
+                "|  AttackDamages = " + attackDamages + "         \n" +
+                "|  HealthPoint   = " + healthPoints + "          \n" +
+                "|  Initiative    = " + initiative + "            \n" +
+                "|  Shield        = " + shield + "                \n" +
+                "|  MagicDamages  = " + magicDamages + "          \n" +
                 "+-----------------------------------------------+\n";
     }
 }

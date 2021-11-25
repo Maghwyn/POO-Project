@@ -20,11 +20,11 @@ public class Menu {
                 """
                                         
                 +-------------------------------+------------------------------+\s
-                |  1. Create Default Character  |  6. Display Characters List  |
-                |  2. Create Warrior Character  |  7. Fight For Glory          |
-                |  3. Create Mage Character     |                              |
-                |  4. Create Thief Character    |  8. Display Menu             |
-                |  5. Remove Character          |  9. Exit the Game            |
+                |  1. Create Default Character  |  6. Remove Character         |
+                |  2. Create Warrior Character  |  7. Display Characters List  |
+                |  3. Create Mage Character     |  8. Fight For Glory          |
+                |  4. Create Thief Character    |  9. Display Menu             |
+                |  5. Create Warrior Mage       |  10. Exit the Game           |
                 +-------------------------------+------------------------------+\s
                 """
         );
@@ -46,11 +46,12 @@ public class Menu {
             case 2 -> createCharacter("Warrior");
             case 3 -> createCharacter("Mage");
             case 4 -> createCharacter("Thief");
-            case 5 -> menuRemove();
-            case 6 -> { character.display_list(); display_submenu(); }
-            case 7 -> fightForGlory();
-            case 8 -> displayMenu();
-            case 9 -> exit(0);
+            case 5 -> createCharacter("WarriorMage");
+            case 6 -> menuRemove();
+            case 7 -> { character.display_list(); display_submenu(); }
+            case 8 -> fightForGlory();
+            case 9 -> displayMenu();
+            case 10 -> exit(0);
             case default -> out.println("Error.");
         }
         return awaitChoice();
@@ -79,12 +80,12 @@ public class Menu {
             if(role.equals("Warrior")) {
                 System.out.print("Enter the shield strength of the character " + name + " : ");
                 int shield = input.nextInt();
-                character.add_character(new Warrior(name, AD, shield, HP, speed));
+                character.add_character(new Warrior(role, name, AD, shield, HP, speed));
             }
             if(role.equals("Mage")) {
                 System.out.print("Enter the magic damages of the character " + name + " : ");
                 int magic = input.nextInt();
-                character.add_character(new Mage(name, AD, magic, HP, speed));
+                character.add_character(new Mage(role, name, AD, magic, HP, speed));
             }
             if(role.equals("Thief")) {
                 System.out.print("Enter the critical chance (0 to 1) of the character " + name + " : ");
@@ -93,12 +94,22 @@ public class Menu {
                 float agility = Float.parseFloat(String.valueOf(input.nextFloat()));
                 character.add_character(new Thief  (name, AD, criticalChance, HP, agility, speed));
             }
+            if(role.equals("WarriorMage")) {
+                System.out.print("Enter the shield strength of the character " + name + " : ");
+                int shield = input.nextInt();
+                System.out.print("Enter the magic damages of the character " + name + " : ");
+                int magicDamages = input.nextInt();
+                character.add_character(new WarriorMage(name, AD, magicDamages, shield, HP, speed));
+            }
+
         }
         else if (iscustom.matches("(?i).*" + "no|n" + ".*")) {
-            if(role.equals("Peasant")) character.add_character(new Peasant(name, 3, 10, 3));
-            if(role.equals("Warrior")) character.add_character(new Warrior(name, 5, 3, 100, 1));
-            if(role.equals("Mage"))    character.add_character(new Mage   (name, 2, 8, 13, 2));
-            if(role.equals("Thief"))   character.add_character(new Thief  (name, 4, 1f,15, 0.9f, 4));
+            if(role.equals("Peasant"))     character.add_character(new Peasant    (name, 3, 10, 3));
+            if(role.equals("Warrior"))     character.add_character(new Warrior    (role, name, 5, 3, 100, 1));
+            if(role.equals("Mage"))        character.add_character(new Mage       (role, name, 2, 8, 13, 2));
+            if(role.equals("Thief"))       character.add_character(new Thief      (name, 4, 1f,15, 0.9f, 4));
+            if(role.equals("WarriorMage")) character.add_character(new WarriorMage(name, 5, 3, 3, 65, 2));
+
         }
     }
 
@@ -166,6 +177,8 @@ public class Menu {
         String[] className  = new String[2];
         Character[] fighter = new Character[2];
 
+        character.display_list();
+
         while(selectedFighters != 2) {
             if(selectedFighters == 0) out.print("Chose your first fighter : ");
             if(selectedFighters == 1) out.print("Chose your second fighter : ");
@@ -197,9 +210,10 @@ public class Menu {
             int defender = turn ? 1 : 0;
             int damage = 0;
 
-            if     (Objects.equals(className[attacker], "Peasant")) damage = fighter[attacker].getAttackDamages();
-            else if(Objects.equals(className[attacker], "Warrior")) damage = fighter[attacker].getAttackDamages();
-            else if(Objects.equals(className[attacker], "Mage"))    damage = fighter[attacker].getEnhancedDamages();
+            if     (Objects.equals(className[attacker], "Peasant"))     damage = fighter[attacker].getAttackDamages();
+            else if(Objects.equals(className[attacker], "Warrior"))     damage = fighter[attacker].getAttackDamages();
+            else if(Objects.equals(className[attacker], "Mage"))        damage = fighter[attacker].getEnhancedDamages();
+            else if(Objects.equals(className[attacker], "WarriorMage")) damage = fighter[attacker].getEnhancedDamages();
             else if(Objects.equals(className[attacker], "Thief")) {
                 float criticalChance = fighter[attacker].getCriticalChance();
                 boolean chance = fighter[attacker].isCritical();
@@ -212,7 +226,7 @@ public class Menu {
                 } else fighter[attacker].enableCritical();
             }
 
-            if(Objects.equals(className[defender], "Warrior")) {
+            if(Objects.equals(className[defender], "Warrior" )|| Objects.equals(className[defender], "WarriorMage" )) {
                 int shield = fighter[defender].getShield();
                 damage = damage - shield;
                 if(damage <= 0) out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
