@@ -58,7 +58,14 @@ public class Character {
     }
 
     private void attributeRandomIndex() {
-        this.indexID = (int) Math.floor(Math.random() * 100);
+        int random = (int) Math.floor(Math.random() * 100);
+        for(Character character : list) {
+            while(character.indexID == random) {
+                random = (int) Math.floor(Math.random() * 100) + 100;
+            }
+        }
+
+        this.indexID = random;
     }
 
     public String getCharacterName() {
@@ -164,11 +171,27 @@ class Peasant extends Character {
     public Peasant(String name, int attackDamages, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
     }
+
+    public String toString() {
+        return "CharacterID : " + indexID + ", Archetype : Peasant{" + "name = '" + name + '\'' +
+                ", AD = " + attackDamages +
+                ", HP = " + healthPoints +
+                ", Speed = " + initiative +
+                "}}";
+    }
 }
 
 class Warrior extends Character {
     public Warrior(String name, int attackDamages, int shield, int healthPoints, int initiative) {
         super(name, attackDamages, shield, healthPoints, initiative);
+    }
+
+    public String toString() {
+        return "CharacterID : " + indexID + ", Archetype : Warrior{" + "name = '" + name + '\'' +
+                ", AD = " + attackDamages +
+                ", HP = " + healthPoints +
+                ", Speed = " + initiative +
+                "}}";
     }
 }
 
@@ -176,10 +199,26 @@ class Mage extends Character {
     public Mage(String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
         super(name, attackDamages, magicDamages, healthPoints, initiative);
     }
+
+    public String toString() {
+        return "CharacterID : " + indexID + ", Archetype : Mage{" + "name = '" + name + '\'' +
+                ", AD = " + attackDamages +
+                ", HP = " + healthPoints +
+                ", Speed = " + initiative +
+                "}}";
+    }
 }
 
 class Thief extends Character {
     public Thief(String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
         super(name, attackDamages, criticalChance, healthPoints, agility, initiative);
+    }
+
+    public String toString() {
+        return "CharacterID : " + indexID + ", Archetype : Thief{" + "name = '" + name + '\'' +
+                ", AD = " + attackDamages +
+                ", HP = " + healthPoints +
+                ", Speed = " + initiative +
+                "}}";
     }
 }
