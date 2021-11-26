@@ -9,6 +9,11 @@ import java.util.Scanner;
 
 public class SaveManager {
     public static void saveForEach(Character allCharacter) {
+        /* This method will be used to save a character into a file JSON.txt.
+         *  We first declare a list which will contain every single character from the original list.
+         *  We then check if the file exit, if not we create it.
+         *  Just in case the file can't be load or is not found, a catch error is implemented to avoid a crash.
+         */
         List<String> jsonContent = new ArrayList<>();
         String os_path = "JSON.txt";
         File file = new File(os_path);
@@ -30,6 +35,11 @@ public class SaveManager {
     }
 
     public static String readFile() {
+        /* This method will be read the save file JSON.txt.
+         *  To avoid save error related, we added a condition where if the file doesn't have anu content it will
+         *  return a message in the terminal explaining the reason it failed.
+         *  Same goes for another issue where the save is invalid.
+         */
         String JSON = null;
         String os_path = "JSON.txt";
         File file = new File(os_path);
@@ -46,6 +56,13 @@ public class SaveManager {
     }
 
     public static void processingExtraction(String JSON, Character character) {
+        /* This method will first clear the list array in case the user try to load the save while playing.
+         *  It will avoid seeing a duplicated array.
+         *
+         *  The processing is a lot of split to get to the element we need.
+         *  Once we got those elements where we wanted, the name extracted will define new variables used
+         *  for the recreation of the main Character list.
+         */
         character.list.clear();
         String[] extractedJSON = JSON.substring(1, JSON.length() - 1).split(", ");
         for (String item : extractedJSON) {

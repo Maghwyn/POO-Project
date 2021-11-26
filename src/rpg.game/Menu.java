@@ -69,7 +69,7 @@ public class Menu {
     }
 
     public void loadGame() {
-        /** This method will call the SaveManager class and read the file JSON.txt.
+        /* This method will call the SaveManager class and read the file JSON.txt.
          * @return : "NotFound" the save file do not have any content.
          * @return : "Invalid" the save file do not met the condition to be imported.
          */
@@ -89,6 +89,12 @@ public class Menu {
     }
 
     private void createCharacter(String role) {
+        /* This method will ask the user if he wants to create his own character or not.
+         *  If user choice is YES : Ask a series of questions used to create the character.
+         *  If user choice is NO : Then load a pre-made character based on the role.
+         *  @role : This String value is based on the user option, if it was 1 it would be Peasant, 2 Warrior...
+         */
+
         System.out.print("Do you want to custom your character ? Y/N : ");
         Scanner choice = new Scanner(System.in);
         String isCustom = choice.nextLine();
@@ -114,55 +120,44 @@ public class Menu {
             System.out.print("Enter the initiative of the character " + name + " : ");
             int speed = IntegerInput(input);
 
-            if(role.equals("Peasant")) character.add_character(new Peasant(ID, name, AD, HP, speed));
-            if(role.equals("Warrior")) {
-                System.out.print("Enter the shield strength of the character " + name + " : ");
-                int shield = IntegerInput(input);
-                character.add_character(new Warrior(ID, name, AD, shield, HP, speed));
-            }
-            if(role.equals("Mage")) {
-                System.out.print("Enter the magic damages of the character " + name + " : ");
-                int magic = IntegerInput(input);
-                character.add_character(new Mage(ID, name, AD, magic, HP, speed));
-            }
-            if(role.equals("Thief")) {
-                System.out.print("Enter the critical chance (0 to 1) of the character " + name + " : ");
-                float criticalChance = 0f;
-                String criticalChanceStr = input.next();
-                if(criticalChanceStr.matches("^*" + "." + "*$")) {
-                    String[] values = criticalChanceStr.split("\\.");
-                    criticalChance = Float.parseFloat(values[0] + "." + values[1]);
-                }else if(criticalChanceStr.matches(",")) {
-                    String[] values = criticalChanceStr.split("\\.");
-                    criticalChance = Float.parseFloat(values[0] + "." + values[1]);
+            switch (role) {
+                case "Peasant" -> character.add_character(new Peasant(ID, name, AD, HP, speed));
+                case "Warrior" -> {
+                    System.out.print("Enter the shield strength of the character " + name + " : ");
+                    int shield = IntegerInput(input);
+                    character.add_character(new Warrior(ID, name, AD, shield, HP, speed));
                 }
-                System.out.print("Enter the agility (0 to 1) of the character " + name + " : ");
-                float agility = 0f;
-                String agilityStr = input.next();
-                if(agilityStr.matches("^*" + "." + "*$")) {
-                    String[] values = agilityStr.split("\\.");
-                    agility = Float.parseFloat(values[0] + "." + values[1]);
-                }else if(agilityStr.matches(",")) {
-                    String[] values = agilityStr.split("\\.");
-                    agility = Float.parseFloat(values[0] + "." + values[1]);
+                case "Mage" -> {
+                    System.out.print("Enter the magic damages of the character " + name + " : ");
+                    int magic = IntegerInput(input);
+                    character.add_character(new Mage(ID, name, AD, magic, HP, speed));
                 }
-                character.add_character(new Thief  (ID, name, AD, criticalChance, HP, agility, speed));
+                case "Thief" -> {
+                    System.out.print("Enter the critical chance (0 to 1) of the character " + name + " : ");
+                    String criticalChanceStr = input.next();
+                    float criticalChance = FloatInput(criticalChanceStr);
+                    System.out.print("Enter the agility (0 to 1) of the character " + name + " : ");
+                    String agilityStr = input.next();
+                    float agility = FloatInput(agilityStr);
+                    character.add_character(new Thief(ID, name, AD, criticalChance, HP, agility, speed));
+                }
+                case "WarriorMage" -> {
+                    System.out.print("Enter the magic damages of the character " + name + " : ");
+                    int magic = IntegerInput(input);
+                    System.out.print("Enter the shield strength of the character " + name + " : ");
+                    int shield = IntegerInput(input);
+                    character.add_character(new WarriorMage(ID, name, AD, magic, shield, HP, speed));
+                }
             }
-            if(role.equals("WarriorMage")) {
-                System.out.print("Enter the magic damages of the character " + name + " : ");
-                int magic = IntegerInput(input);
-                System.out.print("Enter the shield strength of the character " + name + " : ");
-                int shield = IntegerInput(input);
-                character.add_character(new WarriorMage(ID, name, AD, magic, shield, HP, speed));
-            }
-
         }
         else if (isCustom.matches("(?i).*" + "no|n" + ".*")) {
-            if(role.equals("Peasant"))     character.add_character(new Peasant    (ID, name, 3, 10, 3));
-            if(role.equals("Warrior"))     character.add_character(new Warrior    (ID, name, 5, 3, 100, 1));
-            if(role.equals("Mage"))        character.add_character(new Mage       (ID, name, 2, 8, 13, 2));
-            if(role.equals("Thief"))       character.add_character(new Thief      (ID, name, 4, 1f,15, 0.9f, 4));
-            if(role.equals("WarriorMage")) character.add_character(new WarriorMage(ID, name, 5, 8,15, 100, 3));
+            switch (role) {
+                case "Peasant" ->     character.add_character(new Peasant(ID, name, random_int(2,3), random_int(10,20), random_int(3,5)));
+                case "Warrior" ->     character.add_character(new Warrior(ID, name, random_int(4,6), random_int(2,5), random_int(15,30), random_int(1,2)));
+                case "Mage" ->        character.add_character(new Mage(ID, name, random_int(2,3), random_int(5,10), random_int(10,15), random_int(2,3)));
+                case "Thief" ->       character.add_character(new Thief(ID, name, random_int(3,5), random_float(0,1), random_int(10,15), random_float(0,1), random_int(4,6)));
+                case "WarriorMage" -> character.add_character(new WarriorMage(ID, name, random_int(4,6), random_int(5,10), random_int(2,5), random_int(10,25), random_int(3,5)));
+            }
         }
     }
 
@@ -237,11 +232,16 @@ public class Menu {
     }
 
     public void fightForGlory() {
+        // This method will ask for 2 characters, these 2 characters will then be identified to proceed further.
+
         if(character.list.size() <= 1) {
             System.out.println("Not enough fighters in the characters list.");
             awaitChoice();
             return;
-        } else character.display_list();
+        } else {
+            character.display_list();
+            System.out.println(" ");
+        }
 
         int selectedFighters = 0;
         int[] verifiedID    = new int[2];
@@ -253,6 +253,12 @@ public class Menu {
         Character[] fighter = new Character[2];
 
         while(selectedFighters != 2) {
+            // This loop will await for 2 valid characters ID.
+            // If a character ID verified doesn't exit, the loop will ask the question again.
+            // Once the character is valid, the character object will be then recreated in another Character class
+            // Instance to avoid any modification from the main list.
+            // Also, the value of the cloned characters will be used for the fight and the fight alone.
+
             if(selectedFighters == 0) System.out.print("Chose your first fighter : ");
             if(selectedFighters == 1) System.out.print("Chose your second fighter : ");
 
@@ -285,27 +291,35 @@ public class Menu {
         System.out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
                 "-------------------------------------------------");
 
+        // Used to display the turn, and stop the fight once the turn reach 100.
         int nbTurn = 0;
         int nbFighter = fighter.length;
         int checkTurn = nbFighter;
+        // Which character will start first.
         boolean turn = initiative[0] > initiative[1];
 
         while(healthPoints[0] > 0 || healthPoints[1] > 0) {
+            // Binary attribution to select which fighter will be the attacker and the defender.
+            // A lot of condition will be checked to attribute what action will ensure during the fight.
+
             int attacker = turn ? 0 : 1;
             int defender = turn ? 1 : 0;
             int damage = 0;
 
             if(checkTurn == nbFighter) {
-                System.out.println("\n Turn " + nbTurn + " begins ! ");
+                System.out.println("\n**** Turn " + nbTurn + " begins ! ****");
                 nbTurn++;
                 checkTurn = 0;
             }
 
-            if     (Objects.equals(className[attacker], "Peasant"))     damage = fighter[attacker].getAttackDamages();
+            if(Objects.equals(className[attacker], "Peasant"))          damage = fighter[attacker].getAttackDamages();
             else if(Objects.equals(className[attacker], "Warrior"))     damage = fighter[attacker].getAttackDamages();
             else if(Objects.equals(className[attacker], "Mage"))        damage = fighter[attacker].getEnhancedDamages();
             else if(Objects.equals(className[attacker], "WarriorMage")) damage = fighter[attacker].getEnhancedDamages();
             else if(Objects.equals(className[attacker], "Thief")) {
+                // Get the CC and if the Thief can crit this turn or not.
+                // If the CC happen with the random method, then the CD will be on cooldown for 1 turn.
+
                 float criticalChance = fighter[attacker].getCriticalChance();
                 boolean chance = fighter[attacker].isCritical();
                 damage = fighter[attacker].getAttackDamages();
@@ -379,16 +393,31 @@ public class Menu {
         return inputVerified;
     }
 
-    public float FloatInput(Scanner input) {
-        // Prevent the program from crashing if the user input is a String.
-        float inputVerified;
-        try {
-            inputVerified = Float.parseFloat(input.nextLine());
+    public float FloatInput(String input) {
+        // Prevent crash cause by the os language if the user either enter 0.3 or 0,3 when
+        // the program is waiting for a float value.
+
+        float my_float = 0;
+
+        if(input.matches("^*" + "[.]" + "*$")) {
+            String[] values = input.split("\\.");
+            my_float = Float.parseFloat(values[0] + "." + values[1]);
+
         }
-        catch (NumberFormatException nfe) {
-            System.out.println("NumberFormatException: " + nfe.getMessage());
-            return awaitChoice();
+
+        if(input.matches(".*,.*")) {
+            String[] values = input.split(",");
+            my_float = Float.parseFloat(values[0] + "." + values[1]);
         }
-        return inputVerified;
+
+        return my_float;
+    }
+
+    public static int random_int(int Min, int Max) {
+        return (int) (Math.random()*(Max-Min))+Min;
+    }
+
+    public static float random_float(int Min, int Max) {
+        return (float) ((Math.random()*(Max-Min))+Min);
     }
 }
