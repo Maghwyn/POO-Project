@@ -106,9 +106,26 @@ public class Menu {
             }
             if(role.equals("Thief")) {
                 System.out.print("Enter the critical chance (0 to 1) of the character " + name + " : ");
-                float criticalChance = Float.parseFloat(String.valueOf(input.nextFloat()));
+                float criticalChance = 0f;
+                String criticalChanceStr = input.next();
+                if(criticalChanceStr.matches("\\.")) {
+                    String[] values = criticalChanceStr.split("\\.");
+                    System.out.println(Arrays.toString(values));
+                    criticalChance = Float.parseFloat(values[0] + "." + values[1]);
+                }else if(criticalChanceStr.matches(",")) {
+                    String[] values = criticalChanceStr.split("\\.");
+                    criticalChance = Float.parseFloat(values[0] + "." + values[1]);
+                }
                 System.out.print("Enter the agility (0 to 1) of the character " + name + " : ");
-                float agility = Float.parseFloat(String.valueOf(input.nextFloat()));
+                float agility = 0f;
+                String agilityStr = input.next();
+                if(agilityStr.matches("^*" + "." + "*$")) {
+                    String[] values = agilityStr.split("\\.");
+                    agility = Float.parseFloat(values[0] + "." + values[1]);
+                }else if(agilityStr.matches(",")) {
+                    String[] values = agilityStr.split("\\.");
+                    agility = Float.parseFloat(values[0] + "." + values[1]);
+                }
                 character.add_character(new Thief  (ID, name, AD, criticalChance, HP, agility, speed));
             }
             if(role.equals("WarriorMage")) {
@@ -226,18 +243,6 @@ public class Menu {
             name[selectedFighters]         = fighter[selectedFighters].getCharacterName();
             className[selectedFighters]    = fighter[selectedFighters].getClassName();
             selectedFighters++;
-
-//            listClone = (ArrayList<Character>) character.list;
-  //          character2.list.add(new Peasant(10,"zefz",2,2,2));
-            System.out.println("--------- Origin ");
-            character.display_list();
-            System.out.println("--------- Clone ");
-            character2.display_list();
-
-//            for (Character character : character2.list){
-//                System.out.println(character.IndexType());
-//            }
-
         }
 
         System.out.println(className[0] + " " + className[1]);
