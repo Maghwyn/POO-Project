@@ -4,29 +4,29 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
-import static java.lang.System.*;
 
 public class Menu {
     Character character = new Character();
 
     public void MenuWelcome() {
-        out.println("Welcome to the game !\n" +
+        System.out.println("Welcome to the game !\n" +
                 "Please select the options below to start the adventure.");
         displayMenu();
     }
 
     public void displayMenu(){
-        out.print(
+        System.out.print(
                 """
                                         
-                +-------------------------------+------------------------------+\s
-                |  1. Create Default Character  |  7. Fight For Glory          |
-                |  2. Create Warrior Character  |                              |
-                |  3. Create Mage Character     |  8. Display Menu             |
-                |  4. Create Thief Character    |  9. Save The Game            |
-                |  5. Remove Character          |  10. Load Game Save          |
-                |  6. Display Characters List   |  11. Exit The Game           |
-                +-------------------------------+------------------------------+\s
+                +------------------------------+-----------------------------+\s
+                |  1. Create Default           |  8. Fight For Glory          |
+                |  2. Create Warrior           |                              |
+                |  3. Create Mage              |                              |
+                |  4. Create Thief             |  9. Save The Game            |
+                |  5. Create WarriorMage       |  10. Save The Game           |
+                |  6. Remove Character         |  11. Load Game Save          |
+                |  7. Display Characters List  |  12. Exit The Game           |
+                +------------------------------+-----------------------------+\s
                 """
         );
 
@@ -35,8 +35,8 @@ public class Menu {
     }
 
     public int awaitChoice() {
-        out.print("\nYour choice : ");
-        Scanner input = new Scanner(in);
+        System.out.print("\nYour choice : ");
+        Scanner input = new Scanner(System.in);
         int inputChoice = Integer.parseInt(input.nextLine());
         return choseOption(inputChoice);
     }
@@ -47,14 +47,15 @@ public class Menu {
             case 2 -> createCharacter("Warrior");
             case 3 -> createCharacter("Mage");
             case 4 -> createCharacter("Thief");
-            case 5 -> menuRemove();
-            case 6 -> { character.display_list(); display_submenu(); }
-            case 7 -> fightForGlory();
-            case 8 -> displayMenu();
-            case 9 -> saveGame();
-            case 10 -> loadGame();
-            case 11 -> exit(0);
-            case default -> out.println("Error.");
+            case 5 -> createCharacter("WarriorMage");
+            case 6 -> menuRemove();
+            case 7 -> { character.display_list(); display_submenu(); }
+            case 8 -> fightForGlory();
+            case 9 -> displayMenu();
+            case 10 -> saveGame();
+            case 11 -> loadGame();
+            case 12 -> System.exit(0);
+            case default -> System.out.println("Error.");
         }
         return awaitChoice();
     }
@@ -70,14 +71,14 @@ public class Menu {
 
     private void createCharacter(String role) {
         System.out.print("Do you want to custom your character ? Y/N : ");
-        Scanner choice = new Scanner(in);
-        String iscustom = choice.nextLine();
+        Scanner choice = new Scanner(System.in);
+        String isCustom = choice.nextLine();
 
         System.out.print("Enter the name of the new " + role + " : ");
-        Scanner new_character = new Scanner(in);
+        Scanner new_character = new Scanner(System.in);
         String name = new_character.nextLine();
 
-        if (iscustom.matches("(?i).*" + "yes|y" + ".*") ) {
+        if (isCustom.matches("(?i).*" + "yes|y" + ".*") ) {
             Scanner input = new Scanner(System.in);
 
             System.out.print("Enter the attack damages of the character " + name + " : ");
@@ -105,71 +106,81 @@ public class Menu {
                 float agility = Float.parseFloat(String.valueOf(input.nextFloat()));
                 character.add_character(new Thief  (name, AD, criticalChance, HP, agility, speed));
             }
+            if(role.equals("WarriorMage")) {
+                System.out.print("Enter the magic damages of the character " + name + " : ");
+                int magic = input.nextInt();
+                System.out.print("Enter the shield strength of the character " + name + " : ");
+                int shield = input.nextInt();
+                character.add_character(new WarriorMage(name, AD, magic, shield, HP, speed));
+            }
+
         }
-        else if (iscustom.matches("(?i).*" + "no|n" + ".*")) {
-            if(role.equals("Peasant")) character.add_character(new Peasant(name, 3, 10, 3));
-            if(role.equals("Warrior")) character.add_character(new Warrior(name, 5, 3, 100, 1));
-            if(role.equals("Mage"))    character.add_character(new Mage   (name, 2, 8, 13, 2));
-            if(role.equals("Thief"))   character.add_character(new Thief  (name, 4, 1f,15, 0.9f, 4));
+        else if (isCustom.matches("(?i).*" + "no|n" + ".*")) {
+            if(role.equals("Peasant"))     character.add_character(new Peasant    (name, 3, 10, 3));
+            if(role.equals("Warrior"))     character.add_character(new Warrior    (name, 5, 3, 100, 1));
+            if(role.equals("Mage"))        character.add_character(new Mage       (name, 2, 8, 13, 2));
+            if(role.equals("Thief"))       character.add_character(new Thief      (name, 4, 1f,15, 0.9f, 4));
+            if(role.equals("WarriorMage")) character.add_character(new WarriorMage(name, 5, 8,15, 100, 3));
         }
     }
 
     public int menuRemove() {
-        Scanner input = new Scanner(in);
-        out.print("If you wish to cancel the operation, please type : exit\n" +
+        Scanner input = new Scanner(System.in);
+        System.out.print("If you wish to cancel the operation, please type : exit\n" +
                 "Otherwise please select the ID of the character you want to remove : ");
 
         String option = input.nextLine();
         if(option.matches("(?i).*" + "exit" + ".*")) {
-            out.println("Exiting the remove option..");
+            System.out.println("Exiting the remove option..");
             return awaitChoice();
         }
 
         int characterID = Integer.parseInt(option);
         int verifiedID = character.doesCharacterExist(characterID);
         if(verifiedID == -1) {
-            out.println("The character ID provided doesn't seem to exist.\n");
+            System.out.println("The character ID provided doesn't seem to exist.\n");
             return menuRemove();
         }
 
-        Scanner warningConfirmation = new Scanner(in);
-        out.print("Are you sure you want to delete this character ? Y/N : ");
+        Scanner warningConfirmation = new Scanner(System.in);
+        System.out.print("Are you sure you want to delete this character ? Y/N : ");
 
         String confirmChoice = warningConfirmation.nextLine();
         if(confirmChoice.matches("(?i).*" + "no|n" + ".*")) return menuRemove();
         else if (confirmChoice.matches("(?i).*" + "yes|y" + ".*")) {
-            out.println("Removing " + character.list.get(verifiedID) + " from the list..");
+            System.out.println("Removing " + character.list.get(verifiedID) + " from the list..");
             character.removeCharacter(verifiedID);
         }
         return awaitChoice();
     }
 
     public int display_submenu() {
-        out.print("\nWould you like to get detailed information about a specific character ? Y/N : ");
-        Scanner confirmChoice = new Scanner(in);
+        System.out.print("\nWould you like to get detailed information about a specific character ? Y/N : ");
+        Scanner confirmChoice = new Scanner(System.in);
         String choice = confirmChoice.nextLine();
 
         if (choice.matches("(?i).*" + "yes|y" + ".*") ) getCharacterInformation();
-        else if (choice.matches("(?i).*" + "no|n" + ".*")) out.println("Exiting the list menu..");
+        else if (choice.matches("(?i).*" + "no|n" + ".*")) System.out.println("Exiting the list menu..");
         return awaitChoice();
     }
 
     public int getCharacterInformation() {
-        out.print("Please select the ID of the character you seek details : ");
-        Scanner optionID = new Scanner(in);
+        System.out.print("Please select the ID of the character you seek details : ");
+        Scanner optionID = new Scanner(System.in);
 
         int characterID = Integer.parseInt(optionID.nextLine());
         int verifiedID = character.doesCharacterExist(characterID);
         if(verifiedID == -1) {
-            out.println("The character ID provided doesn't seem to exist.\n");
+            System.out.println("The character ID provided doesn't seem to exist.\n");
             return getCharacterInformation();
         }
 
-        out.println(character.list.get(verifiedID));
+        System.out.println(character.list.get(verifiedID));
         return display_submenu();
     }
 
     public void fightForGlory() {
+        //We need to add a clone so the stats aren't definitive.
         int selectedFighters = 0;
         int[] verifiedID    = new int[2];
         int[] healthPoints  = new int[2];
@@ -179,27 +190,27 @@ public class Menu {
         Character[] fighter = new Character[2];
 
         while(selectedFighters != 2) {
-            if(selectedFighters == 0) out.print("Chose your first fighter : ");
-            if(selectedFighters == 1) out.print("Chose your second fighter : ");
+            if(selectedFighters == 0) System.out.print("Chose your first fighter : ");
+            if(selectedFighters == 1) System.out.print("Chose your second fighter : ");
 
-            Scanner thisFighter = new Scanner(in);
+            Scanner thisFighter = new Scanner(System.in);
             int characterID = Integer.parseInt(thisFighter.nextLine());
             verifiedID[selectedFighters] = character.doesCharacterExist(characterID);
             if(verifiedID[selectedFighters] == -1) {
-                out.println("The character ID provided doesn't seem to exist.\n");
+                System.out.println("The character ID provided doesn't seem to exist.\n");
                 continue;
             }
 
-            fighter[selectedFighters] = character.getFighter(characterID);
+            fighter[selectedFighters]      = character.getFighter(characterID);
             healthPoints[selectedFighters] = fighter[selectedFighters].getHealthPoints();
-            initiative[selectedFighters] = fighter[selectedFighters].getInitiative();
-            name[selectedFighters] = fighter[selectedFighters].getCharacterName();
-            className[selectedFighters] = fighter[selectedFighters].getClassName();
+            initiative[selectedFighters]   = fighter[selectedFighters].getInitiative();
+            name[selectedFighters]         = fighter[selectedFighters].getCharacterName();
+            className[selectedFighters]    = fighter[selectedFighters].getClassName();
             selectedFighters++;
         }
 
-        out.println(className[0] + " " + className[1]);
-        out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
+        System.out.println(className[0] + " " + className[1]);
+        System.out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
                 "-------------------------------------------------");
 
         boolean turn = initiative[0] > initiative[1];
@@ -209,9 +220,10 @@ public class Menu {
             int defender = turn ? 1 : 0;
             int damage = 0;
 
-            if     (Objects.equals(className[attacker], "Peasant")) damage = fighter[attacker].getAttackDamages();
-            else if(Objects.equals(className[attacker], "Warrior")) damage = fighter[attacker].getAttackDamages();
-            else if(Objects.equals(className[attacker], "Mage"))    damage = fighter[attacker].getEnhancedDamages();
+            if     (Objects.equals(className[attacker], "Peasant"))     damage = fighter[attacker].getAttackDamages();
+            else if(Objects.equals(className[attacker], "Warrior"))     damage = fighter[attacker].getAttackDamages();
+            else if(Objects.equals(className[attacker], "Mage"))        damage = fighter[attacker].getEnhancedDamages();
+            else if(Objects.equals(className[attacker], "WarriorMage")) damage = fighter[attacker].getEnhancedDamages();
             else if(Objects.equals(className[attacker], "Thief")) {
                 float criticalChance = fighter[attacker].getCriticalChance();
                 boolean chance = fighter[attacker].isCritical();
@@ -227,31 +239,39 @@ public class Menu {
             if(Objects.equals(className[defender], "Warrior")) {
                 int shield = fighter[defender].getShield();
                 damage = damage - shield;
-                if(damage <= 0) out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
+                if(damage <= 0) System.out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
                 else {
                     fighter[defender].takeDamages(damage);
-                    out.println("\n" + name[defender] + " took " + damage + " damages");
+                    System.out.println("\n" + name[defender] + " took " + damage + " damages");
                 }
             } else if(Objects.equals(className[defender], "Thief")) {
                 float agility = fighter[defender].getAgility();
                 boolean miss = new Random().nextFloat() <= agility;
 
-                if(miss) out.println(className[attacker] + " " + name[attacker] + " missed");
+                if (miss) System.out.println(className[attacker] + " " + name[attacker] + " missed");
                 else {
                     fighter[defender].takeDamages(damage);
-                    out.println(name[defender] + " took " + damage + " damages");
+                    System.out.println(name[defender] + " took " + damage + " damages");
+                }
+            } else if(Objects.equals(className[defender], "WarriorMage")) {
+                int shield = fighter[defender].getShield();
+                damage = damage - shield;
+                if(damage <= 0) System.out.println("WarriorMage " + name[defender] + " nullified the damages with his shield.");
+                else {
+                    fighter[defender].takeDamages(damage);
+                    System.out.println("\n" + name[defender] + " took " + damage + " damages");
                 }
             } else {
                 fighter[defender].takeDamages(damage);
-                out.println("\n" + name[defender] + " took " + damage + " damages");
+                System.out.println("\n" + name[defender] + " took " + damage + " damages");
             }
 
             int currentHealthPoints = fighter[defender].getHealthPoints();
-            out.println(name[defender] + " remaining hp is " + currentHealthPoints);
+            System.out.println(name[defender] + " remaining hp is " + currentHealthPoints);
 
             if(currentHealthPoints <= 0) {
-                out.println("-------------------------------------------------");
-                out.print("The winner of the confrontation is " + name[attacker] + ", congratulation ! For now..\n");
+                System.out.println("-------------------------------------------------");
+                System.out.print("The winner of the confrontation is " + name[attacker] + ", congratulation ! For now..\n");
                 character.removeCharacter(verifiedID[defender]);
                 break;
             }
