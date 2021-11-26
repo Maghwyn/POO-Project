@@ -13,7 +13,6 @@ public class SaveManager {
         String os_path = "JSON.txt";
         File file = new File(os_path);
 
-
         for(Character character : allCharacter.list) {
             jsonContent.add(character.convertToJSON());
         }
@@ -74,7 +73,7 @@ public class SaveManager {
                 if (name_stat[0].equals("initiative")) speed = Integer.parseInt(name_stat[1]);
                 if (name_stat[0].equals("magicDamages")) AP = Integer.parseInt(name_stat[1]);
                 if (name_stat[0].equals("shield")) SD = Integer.parseInt(name_stat[1]);
-                if (name_stat[0].equals("critchance")) CD = Float.parseFloat(name_stat[1]);
+                if (name_stat[0].equals("critChance")) CD = Float.parseFloat(name_stat[1]);
                 if (name_stat[0].equals("agility")) dodge = Float.parseFloat(name_stat[1]);
             }
 
@@ -82,6 +81,7 @@ public class SaveManager {
             if (className.equals("Warrior")) character.add_character(new Warrior(charaName, AD, SD, HP, speed));
             if (className.equals("Mage")) character.add_character(new Mage(charaName, AD, AP, HP, speed));
             if (className.equals("Thief")) character.add_character(new Thief(charaName, AD, CD, HP, dodge, speed));
+            if (className.equals("WarriorMage"))  character.add_character(new WarriorMage(charaName, AD, AP, SD, HP, speed));
         }
     }
 }
