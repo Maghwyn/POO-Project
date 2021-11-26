@@ -159,16 +159,18 @@ public class Menu {
 
     public void fightForGlory() {
         int selectedFighters = 0;
-        int[] verifiedID    = new int[2];
-        int[] healthPoints  = new int[2];
-        int[] initiative    = new int[2];
-        String[] name       = new String[2];
-        String[] className  = new String[2];
-        Character[] fighter = new Character[2];
+        int[] verifiedID    = new int[5];
+        int[] healthPoints  = new int[5];
+        int[] initiative    = new int[5];
+        String[] name       = new String[5];
+        String[] className  = new String[5];
+        Character[] fighter = new Character[5];
 
-        while(selectedFighters != 2) {
+        while(selectedFighters != 4) {
             if(selectedFighters == 0) out.print("Chose your first fighter : ");
             if(selectedFighters == 1) out.print("Chose your second fighter : ");
+            if(selectedFighters == 2) out.print("Chose your third fighter : ");
+            if(selectedFighters == 3) out.print("Chose your fourth fighter : ");
 
             Scanner thisFighter = new Scanner(in);
             int characterID = Integer.parseInt(thisFighter.nextLine());
@@ -185,16 +187,19 @@ public class Menu {
             className[selectedFighters] = fighter[selectedFighters].getClassName();
             selectedFighters++;
         }
-
-        out.println(className[0] + " " + className[1]);
-        out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
+        out.println(className[0] + " and " + className[1] + " and " + className[2] + " and " + className[3]);
+        out.print("\n" + name[0] + " and " + name[1] + " VS " + name[2] + " and " + name[3] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
                 "-------------------------------------------------");
 
-        boolean turn = initiative[0] > initiative[1];
+        boolean turn = initiative[0] > initiative[2];
+        boolean turn1 = initiative[1] > initiative[3];
 
-        while(healthPoints[0] > 0 || healthPoints[1] > 0) {
-            int attacker = turn ? 0 : 1;
-            int defender = turn ? 1 : 0;
+        while(healthPoints[0] > 0 || healthPoints[1] > 0 || healthPoints[2] > 0 || healthPoints[3] > 0) {
+            int attacker = turn ? 0 : 2;
+            int defender = turn ? 2 : 0;
+            int attacker1 = turn1 ? 1 : 3;
+            int defender1 = turn1 ? 3 : 1;
+
             int damage = 0;
 
             if     (Objects.equals(className[attacker], "Peasant")) damage = fighter[attacker].getAttackDamages();
@@ -204,47 +209,184 @@ public class Menu {
                 float criticalChance = fighter[attacker].getCriticalChance();
                 boolean chance = fighter[attacker].isCritical();
                 damage = fighter[attacker].getAttackDamages();
-
                 if((new Random().nextFloat() <= criticalChance) && chance) {
                     fighter[attacker].disableCritical();
                     damage = damage*2;
-
                 } else fighter[attacker].enableCritical();
             }
+            if     (Objects.equals(className[attacker1], "Peasant")) damage = fighter[attacker1].getAttackDamages();
+            else if(Objects.equals(className[attacker1], "Warrior")) damage = fighter[attacker1].getAttackDamages();
+            else if(Objects.equals(className[attacker1], "Mage"))    damage = fighter[attacker1].getEnhancedDamages();
+            else if(Objects.equals(className[attacker1], "Thief")) {
+                float criticalChance = fighter[attacker1].getCriticalChance();
+                boolean chance = fighter[attacker1].isCritical();
+                damage = fighter[attacker1].getAttackDamages();
+                if((new Random().nextFloat() <= criticalChance) && chance) {
+                    fighter[attacker1].disableCritical();
+                    damage = damage*2;
+                } else fighter[attacker1].enableCritical();
+            }
 
+            out.println("\n----------------------FIGHT1------------------------\n");
             if(Objects.equals(className[defender], "Warrior")) {
                 int shield = fighter[defender].getShield();
                 damage = damage - shield;
-                if(damage <= 0) out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
+                if(damage <= 0) out.println("Warrior " + name[defender] + " nullified the damages with his shield. pt team2 " + name[attacker]);
                 else {
                     fighter[defender].takeDamages(damage);
-                    out.println("\n" + name[defender] + " took " + damage + " damages");
+                    out.println("\n" + name[defender] + " took " + damage + " damages to team 2 " + name[attacker]);
                 }
             } else if(Objects.equals(className[defender], "Thief")) {
                 float agility = fighter[defender].getAgility();
                 boolean miss = new Random().nextFloat() <= agility;
 
-                if(miss) out.println(className[attacker] + " " + name[attacker] + " missed");
+                if(miss) out.println(className[attacker] + " " + name[attacker] + " missed to team 2 " + name[defender]);
                 else {
                     fighter[defender].takeDamages(damage);
-                    out.println(name[defender] + " took " + damage + " damages");
+                    out.println(name[defender] + " took " + damage + " damages to team 2 " + name[attacker]);
                 }
             } else {
                 fighter[defender].takeDamages(damage);
-                out.println("\n" + name[defender] + " took " + damage + " damages");
+                out.println("\n" + name[defender] + " took " + damage + " damages to team2 " + name[attacker]);
             }
-
             int currentHealthPoints = fighter[defender].getHealthPoints();
             out.println(name[defender] + " remaining hp is " + currentHealthPoints);
 
             if(currentHealthPoints <= 0) {
+                currentHealthPoints = 0;
                 out.println("-------------------------------------------------");
                 out.print("The winner of the confrontation is " + name[attacker] + ", congratulation ! For now..\n");
                 character.removeCharacter(verifiedID[defender]);
+            }
+            out.println("\n----------------------FIGHT2------------------------\n");
+            if(Objects.equals(className[defender1], "Warrior")) {
+                int shield = fighter[defender1].getShield();
+                damage = damage - shield;
+                if(damage <= 0) out.println("Warrior 2 " + name[defender1] + " nullified the damages with his shield. to team1 " + name[attacker1]);
+                else {
+                    fighter[defender1].takeDamages(damage);
+                    out.println("\n" + name[defender1] + " took " + damage + " damages  to team 1 " + name[attacker1]);
+                }
+            } else if(Objects.equals(className[defender1], "Thief 2")) {
+                float agility = fighter[defender1].getAgility();
+                boolean miss = new Random().nextFloat() <= agility;
+
+                if(miss) out.println(className[attacker1] + " " + name[attacker1] + " missed to team 1 " + name[defender1]);
+                else {
+                    fighter[defender1].takeDamages(damage);
+                    out.println(name[defender1] + " took " + damage + " damages to team 1 " + name[attacker1]);
+                }
+            } else {
+                fighter[defender1].takeDamages(damage);
+                out.println("\n" + name[defender1] + " took " + damage + " damages to team 1 " + name[attacker1]);
+            }
+            int currentHealthPoints1 = fighter[defender1].getHealthPoints();
+            out.println(name[defender1] + " remaining hp is " + currentHealthPoints1);
+
+            if(currentHealthPoints1 <= 0) {
+                currentHealthPoints1 = 0;
+                out.println("-------------------------------------------------");
+                out.print("The winner of the confrontation is " + name[attacker1] + ", congratulation ! For now..\n");
+                character.removeCharacter(verifiedID[defender1]);
                 break;
             }
-
-            turn = !turn;
+            if(turn == turn1){
+                turn = !turn;
+            }
+            else {
+                turn1 = !turn1;
+            }
         }
     }
+
+//    public void fightForGlory() {
+//        int selectedFighters = 0;
+//        int[] verifiedID    = new int[2];
+//        int[] healthPoints  = new int[2];
+//        int[] initiative    = new int[2];
+//        String[] name       = new String[2];
+//        String[] className  = new String[2];
+//        Character[] fighter = new Character[2];
+//
+//        while(selectedFighters != 2) {
+//            if(selectedFighters == 0) out.print("Chose your first fighter : ");
+//            if(selectedFighters == 1) out.print("Chose your second fighter : ");
+//
+//            Scanner thisFighter = new Scanner(in);
+//            int characterID = Integer.parseInt(thisFighter.nextLine());
+//            verifiedID[selectedFighters] = character.doesCharacterExist(characterID);
+//            if(verifiedID[selectedFighters] == -1) {
+//                out.println("The character ID provided doesn't seem to exist.\n");
+//                continue;
+//            }
+//
+//            fighter[selectedFighters] = character.getFighter(characterID);
+//            healthPoints[selectedFighters] = fighter[selectedFighters].getHealthPoints();
+//            initiative[selectedFighters] = fighter[selectedFighters].getInitiative();
+//            name[selectedFighters] = fighter[selectedFighters].getCharacterName();
+//            className[selectedFighters] = fighter[selectedFighters].getClassName();
+//            selectedFighters++;
+//        }
+//
+//        out.println(className[0] + " " + className[1]);
+//        out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
+//                "-------------------------------------------------");
+//
+//        boolean turn = initiative[0] > initiative[1];
+//
+//        while(healthPoints[0] > 0 || healthPoints[1] > 0) {
+//            int attacker = turn ? 0 : 1;
+//            int defender = turn ? 1 : 0;
+//            int damage = 0;
+//
+//            if     (Objects.equals(className[attacker], "Peasant")) damage = fighter[attacker].getAttackDamages();
+//            else if(Objects.equals(className[attacker], "Warrior")) damage = fighter[attacker].getAttackDamages();
+//            else if(Objects.equals(className[attacker], "Mage"))    damage = fighter[attacker].getEnhancedDamages();
+//            else if(Objects.equals(className[attacker], "Thief")) {
+//                float criticalChance = fighter[attacker].getCriticalChance();
+//                boolean chance = fighter[attacker].isCritical();
+//                damage = fighter[attacker].getAttackDamages();
+//
+//                if((new Random().nextFloat() <= criticalChance) && chance) {
+//                    fighter[attacker].disableCritical();
+//                    damage = damage*2;
+//
+//                } else fighter[attacker].enableCritical();
+//            }
+//
+//            if(Objects.equals(className[defender], "Warrior")) {
+//                int shield = fighter[defender].getShield();
+//                damage = damage - shield;
+//                if(damage <= 0) out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
+//                else {
+//                    fighter[defender].takeDamages(damage);
+//                    out.println("\n" + name[defender] + " took " + damage + " damages");
+//                }
+//            } else if(Objects.equals(className[defender], "Thief")) {
+//                float agility = fighter[defender].getAgility();
+//                boolean miss = new Random().nextFloat() <= agility;
+//
+//                if(miss) out.println(className[attacker] + " " + name[attacker] + " missed");
+//                else {
+//                    fighter[defender].takeDamages(damage);
+//                    out.println(name[defender] + " took " + damage + " damages");
+//                }
+//            } else {
+//                fighter[defender].takeDamages(damage);
+//                out.println("\n" + name[defender] + " took " + damage + " damages");
+//            }
+//
+//            int currentHealthPoints = fighter[defender].getHealthPoints();
+//            out.println(name[defender] + " remaining hp is " + currentHealthPoints);
+//
+//            if(currentHealthPoints <= 0) {
+//                out.println("-------------------------------------------------");
+//                out.print("The winner of the confrontation is " + name[attacker] + ", congratulation ! For now..\n");
+//                character.removeCharacter(verifiedID[defender]);
+//                break;
+//            }
+//
+//            turn = !turn;
+//        }
+//    }
 }
