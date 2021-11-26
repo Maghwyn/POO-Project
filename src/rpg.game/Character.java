@@ -6,8 +6,8 @@ import java.util.List;
 public class Character implements Stats, Fighting, Save, Management {
     /**
      */
-    String className, name;
-    int indexID, healthPoints, attackDamages, initiative;
+    protected String className, name;
+    protected int indexID, healthPoints, attackDamages, initiative;
     public List<Character> list = new ArrayList<>();
 
     public Character() { }
@@ -128,7 +128,7 @@ class Peasant extends Character {
 }
 
 class Warrior extends Character {
-    int shield;
+    protected int shield;
 
     public Warrior(int indexID, String name, int attackDamages, int shield, int healthPoints, int initiative) {
         /** Initialise the className and IndexID for a character Peasant.
@@ -168,7 +168,7 @@ class Warrior extends Character {
 }
 
 class Mage extends Character {
-    int magicDamages;
+    protected int magicDamages;
 
     public Mage(int indexID, String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
         /** Initialise the className and IndexID for a character Peasant.
@@ -214,9 +214,8 @@ class Mage extends Character {
 }
 
 class Thief extends Character {
-    float agility;
-    float criticalChance;
-    boolean isCritical = true;
+    protected float agility, criticalChance;
+    protected boolean isCritical = true;
 
     public Thief(int indexID, String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
         /** Initialise the className and IndexID for a character Peasant.
@@ -264,8 +263,7 @@ class Thief extends Character {
 }
 
 class WarriorMage extends Character {
-    int magicDamages;
-    int shield;
+    protected int magicDamages, shield;
 
     public WarriorMage (int indexID, String name, int attackDamages, int magicDamages, int shield, int healthPoints, int initiative) {
         /** Initialise the className and IndexID for a character Peasant.

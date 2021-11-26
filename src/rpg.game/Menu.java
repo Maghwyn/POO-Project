@@ -7,13 +7,13 @@ import java.util.Scanner;
 public class Menu {
     Character character = new Character();
 
-    public void MenuWelcome() {
+    public void MenuWelcome() throws InterruptedException {
         System.out.println("Welcome to the game !\n" +
                 "Please select the options below to start the adventure.");
         displayMenu();
     }
 
-    public void displayMenu(){
+    public void displayMenu() throws InterruptedException {
         System.out.print(
                 """
                                         
@@ -32,7 +32,7 @@ public class Menu {
         awaitChoice();
     }
 
-    public int awaitChoice() {
+    public int awaitChoice() throws InterruptedException {
         // Await a menu choice.
         System.out.print("\nYour choice : ");
         Scanner input = new Scanner(System.in);
@@ -40,7 +40,7 @@ public class Menu {
         return choseOption(inputChoice);
     }
 
-    public int choseOption(int choice) {
+    public int choseOption(int choice) throws InterruptedException {
         // Based on the input, do something related to the option.
         switch (choice){
             case 0 -> awaitChoice();
@@ -49,9 +49,9 @@ public class Menu {
             case 3 -> createCharacter("Mage");
             case 4 -> createCharacter("Thief");
             case 5 -> createCharacter("WarriorMage");
-            case 6 -> menuRemove();
-            case 7 -> { character.display_list(); display_submenu(); }
-            case 8 -> fightForGlory();
+            case 6 -> { isCharactersInList(0); character.display_list(); System.out.println(" "); menuRemove(); }
+            case 7 -> { isCharactersInList(0); character.display_list(); display_submenu(); }
+            case 8 -> { isCharactersInList(1); character.display_list(); System.out.println(" "); fightForGlory(); }
             case 9 -> displayMenu();
             case 10 -> saveGame();
             case 11 -> loadGame();
@@ -68,7 +68,7 @@ public class Menu {
         System.out.println("Saved");
     }
 
-    public void loadGame() {
+    public void loadGame() throws InterruptedException {
         /* This method will call the SaveManager class and read the file JSON.txt.
          * @return : "NotFound" the save file do not have any content.
          * @return : "Invalid" the save file do not met the condition to be imported.
@@ -88,7 +88,7 @@ public class Menu {
         System.out.println("Loaded");
     }
 
-    private void createCharacter(String role) {
+    private void createCharacter(String role) throws InterruptedException {
         /* This method will ask the user if he wants to create his own character or not.
          *  If user choice is YES : Ask a series of questions used to create the character.
          *  If user choice is NO : Then load a pre-made character based on the role.
@@ -161,7 +161,7 @@ public class Menu {
         }
     }
 
-    public int menuRemove() {
+    public int menuRemove() throws InterruptedException {
         /* This method will await the user choice, exit will quit this option.
          *  If the user choice is a character ID, a verification of the ID will be undergoing.
          *  If this ID is not found, the question for an ID will be asked again.
@@ -169,9 +169,12 @@ public class Menu {
          *  If user choice is NO : Exit the option.
          *  If user choice is YES : Removing the character from the list.
          */
+
         Scanner input = new Scanner(System.in);
-        System.out.print("If you wish to cancel the operation, please type : exit\n" +
-                "Otherwise please select the ID of the character you want to remove : ");
+        System.out.print("""
+
+                If you wish to cancel the operation, please type : exit
+                Otherwise please select the ID of the character you want to remove :\s""");
 
         String option = input.nextLine();
         if(option.matches("(?i).*" + "exit" + ".*")) {
@@ -179,7 +182,14 @@ public class Menu {
             return awaitChoice();
         }
 
-        int characterID = Integer.parseInt(option);
+        int characterID;
+        try {
+            characterID = Integer.parseInt(option);
+        } catch (NumberFormatException nfe) {
+            System.out.println("You provided a chain of characters but the program was waiting for a number.\nPlease try again.");
+            return menuRemove();
+        }
+
         int verifiedID = character.doesCharacterExist(characterID);
         if(verifiedID == -1) {
             System.out.println("The character ID provided doesn't seem to exist.\n");
@@ -192,13 +202,13 @@ public class Menu {
         String confirmChoice = warningConfirmation.nextLine();
         if(confirmChoice.matches("(?i).*" + "no|n" + ".*")) return menuRemove();
         else if (confirmChoice.matches("(?i).*" + "yes|y" + ".*")) {
-            System.out.println("Removing " + character.list.get(verifiedID) + " from the list..");
+            System.out.println(character.list.get(verifiedID) + "Removing from the list..");
             character.removeCharacter(verifiedID);
         }
         return awaitChoice();
     }
 
-    public int display_submenu() {
+    public int display_submenu() throws InterruptedException {
         /* This method will ask the user if he wants the details of a specific character.
          *  If user choice is NO : Exit the option.
          *  If user choice is YES : Calling the getCharacterInformation method.
@@ -212,7 +222,7 @@ public class Menu {
         return awaitChoice();
     }
 
-    public int getCharacterInformation() {
+    public int getCharacterInformation() throws InterruptedException {
         /* This method await a character ID and a verification of the ID will be undergoing.
          *  If this ID is not found, the question for an ID will be asked again.
          *  Once the confirmation of the ID is valid, the details of the character will be displayed.
@@ -231,17 +241,8 @@ public class Menu {
         return display_submenu();
     }
 
-    public void fightForGlory() {
+    public void fightForGlory() throws InterruptedException {
         // This method will ask for 2 characters, these 2 characters will then be identified to proceed further.
-
-        if(character.list.size() <= 1) {
-            System.out.println("Not enough fighters in the characters list.");
-            awaitChoice();
-            return;
-        } else {
-            character.display_list();
-            System.out.println(" ");
-        }
 
         int selectedFighters = 0;
         int[] verifiedID    = new int[2];
@@ -307,7 +308,7 @@ public class Menu {
             int damage = 0;
 
             if(checkTurn == nbFighter) {
-                System.out.println("\n**** Turn " + nbTurn + " begins ! ****");
+                System.out.println("\n----------- Turn " + nbTurn + " begins ! -----------");
                 nbTurn++;
                 checkTurn = 0;
             }
@@ -364,15 +365,23 @@ public class Menu {
 
             if(currentHealthPoints <= 0) {
                 System.out.println("-------------------------------------------------");
-                System.out.print("The winner of the confrontation is " + className[attacker] + " " + name[attacker] + ", congratulation ! For now..\n");
+                System.out.println("Result from the battle :\n");
+                System.out.print("The winner of the confrontation is " + className[attacker] + " " + name[attacker] + ", congratulations ! For now..\n");
                 character.removeCharacter(verifiedID[defender]);
                 break;
             }
 
             if(nbTurn == 101) {
                 System.out.println("-------------------------------------------------");
-                System.out.println("You both survived, no one won.");
+                System.out.println("Result from the battle :\n");
+                System.out.println("Luckily you both survived, no one won...");
                 break;
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException ignored) {
+
             }
 
             turn = !turn;
@@ -380,14 +389,14 @@ public class Menu {
         }
     }
 
-    public int IntegerInput(Scanner input) {
+    public int IntegerInput(Scanner input) throws InterruptedException {
         // Prevent the program from crashing if the user input is a String.
         int inputVerified;
         try {
             inputVerified = Integer.parseInt(input.nextLine());
         }
         catch (NumberFormatException nfe) {
-            System.out.println("NumberFormatException: " + nfe.getMessage());
+            System.out.println("You provided a chain of characters but the program was waiting for a number.\nPlease try again.");
             return awaitChoice();
         }
         return inputVerified;
@@ -419,5 +428,12 @@ public class Menu {
 
     public static float random_float(int Min, int Max) {
         return (float) ((Math.random()*(Max-Min))+Min);
+    }
+
+    public void isCharactersInList(int limit) throws InterruptedException {
+        if(character.list.size() <= limit) {
+            System.out.println("Not enough characters in the characters list.");
+            awaitChoice();
+        }
     }
 }

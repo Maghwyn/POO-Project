@@ -1,1 +1,1 @@
-[0:Mage=>name:zfezefzefz,attackDamages:2,magicDamages:5,healthPoints:11,initiative:2, 1:Warrior=>name:zergergregerg,attackDamages:4,healthPoints:29,initiative:1,shield:2, 3:Peasant=>name:zeffzfzefzez,attackDamages:2,healthPoints:10,initiative:3]
+[0:Peasant=>name:zefzefezfezf,attackDamages:2,healthPoints:19,initiative:3, 1:Peasant=>name:zefzefezfz,attackDamages:2,healthPoints:15,initiative:4, 2:Warrior=>name:zefzfgzegfz,attackDamages:5,healthPoints:21,initiative:1,shield:3]
