@@ -14,19 +14,6 @@ public class Character implements Stats, Fighting, Save, Management {
         this.attackDamages = attackDamages;
         this.healthPoints  = healthPoints;
         this.initiative    = initiative;
-        attributeRandomIndex();
-    }
-
-    private void attributeRandomIndex() {
-        int random = (int) Math.floor(Math.random() * 100);
-        for(Character character : list) {
-            while(character.indexID == random) {
-                random = (int) Math.floor(Math.random() * 100);
-                random = random + 100;
-            }
-        }
-
-        this.indexID = random;
     }
 
     public void add_character(Character new_character) { list.add(new_character);  }
@@ -102,9 +89,10 @@ public class Character implements Stats, Fighting, Save, Management {
 }
 
 class Peasant extends Character {
-    public Peasant(String name, int attackDamages, int healthPoints, int initiative) {
+    public Peasant(int indexID, String name, int attackDamages, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
-        this.className     = "Peasant";
+        this.className = "Peasant";
+        this.indexID   = indexID;
     }
 
     public String IndexType() {
@@ -133,10 +121,11 @@ class Peasant extends Character {
 class Warrior extends Character {
     int shield;
 
-    public Warrior(String name, int attackDamages, int shield, int healthPoints, int initiative) {
+    public Warrior(int indexID, String name, int attackDamages, int shield, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
-        this.className    = "Warrior";
-        this.shield       = shield;
+        this.className = "Warrior";
+        this.indexID   = indexID;
+        this.shield    = shield;
     }
 
     public int getShield() { return shield; }
@@ -168,9 +157,10 @@ class Warrior extends Character {
 class Mage extends Character {
     int magicDamages;
 
-    public Mage(String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
+    public Mage(int indexID, String name, int attackDamages, int magicDamages, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
         this.className    = "Mage";
+        this.indexID      = indexID;
         this.magicDamages = magicDamages;
     }
 
@@ -210,9 +200,10 @@ class Thief extends Character {
     float criticalChance;
     boolean isCritical = true;
 
-    public Thief(String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
+    public Thief(int indexID, String name, int attackDamages, float criticalChance, int healthPoints, float agility, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
         this.className      = "Thief";
+        this.indexID        = indexID;
         this.criticalChance = criticalChance;
         this.agility        = agility;
     }
@@ -253,11 +244,12 @@ class WarriorMage extends Character {
     int magicDamages;
     int shield;
 
-    public WarriorMage (String name, int attackDamages, int magicDamages, int shield, int healthPoints, int initiative) {
+    public WarriorMage (int indexID, String name, int attackDamages, int magicDamages, int shield, int healthPoints, int initiative) {
         super(name, attackDamages, healthPoints, initiative);
-        this.className = "WarriorMage";
+        this.className    = "WarriorMage";
+        this.indexID      = indexID;
         this.magicDamages = magicDamages;
-        this.shield = shield;
+        this.shield       = shield;
     }
 
     public int getShield() { return shield; }

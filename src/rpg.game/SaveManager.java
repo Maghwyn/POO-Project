@@ -77,11 +77,11 @@ public class SaveManager {
                 if (name_stat[0].equals("agility")) dodge = Float.parseFloat(name_stat[1]);
             }
 
-            if (className.equals("Peasant")) character.add_character(new Peasant(charaName, AD, HP, speed));
-            if (className.equals("Warrior")) character.add_character(new Warrior(charaName, AD, SD, HP, speed));
-            if (className.equals("Mage")) character.add_character(new Mage(charaName, AD, AP, HP, speed));
-            if (className.equals("Thief")) character.add_character(new Thief(charaName, AD, CD, HP, dodge, speed));
-            if (className.equals("WarriorMage"))  character.add_character(new WarriorMage(charaName, AD, AP, SD, HP, speed));
+            if (className.equals("Peasant")) character.add_character(new Peasant(IndexID, charaName, AD, HP, speed));
+            if (className.equals("Warrior")) character.add_character(new Warrior(IndexID, charaName, AD, SD, HP, speed));
+            if (className.equals("Mage")) character.add_character(new Mage(IndexID, charaName, AD, AP, HP, speed));
+            if (className.equals("Thief")) character.add_character(new Thief(IndexID, charaName, AD, CD, HP, dodge, speed));
+            if (className.equals("WarriorMage"))  character.add_character(new WarriorMage(IndexID, charaName, AD, AP, SD, HP, speed));
         }
     }
 }

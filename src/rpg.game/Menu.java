@@ -19,10 +19,10 @@ public class Menu {
                 """
                                         
                 +------------------------------+-----------------------------+\s
-                |  1. Create Default           |  8. Fight For Glory          |
+                |  1. Create Default           |  8.  Fight For Glory         |
                 |  2. Create Warrior           |                              |
                 |  3. Create Mage              |                              |
-                |  4. Create Thief             |  9. Save The Game            |
+                |  4. Create Thief             |  9.  Display the menu        |
                 |  5. Create WarriorMage       |  10. Save The Game           |
                 |  6. Remove Character         |  11. Load Game Save          |
                 |  7. Display Characters List  |  12. Exit The Game           |
@@ -78,6 +78,19 @@ public class Menu {
         Scanner new_character = new Scanner(System.in);
         String name = new_character.nextLine();
 
+        int ID = character.list.size();
+        int verifiedID = character.doesCharacterExist(ID);
+        while(verifiedID != -1) {
+            ID = ID + 1;
+            verifiedID = character.doesCharacterExist(ID);
+        }
+//        int ID = (int) Math.floor(Math.random() * 3);
+//        int verifiedID = character.doesCharacterExist(ID);
+//        while(verifiedID != -1) {
+//            ID = (int) Math.floor(Math.random() * 3);
+//            verifiedID = character.doesCharacterExist(ID);
+//        }
+
         if (isCustom.matches("(?i).*" + "yes|y" + ".*") ) {
             Scanner input = new Scanner(System.in);
 
@@ -88,39 +101,39 @@ public class Menu {
             System.out.print("Enter the initiative of the character " + name + " : ");
             int speed = input.nextInt();
 
-            if(role.equals("Peasant")) character.add_character(new Peasant(name, AD, HP, speed));
+            if(role.equals("Peasant")) character.add_character(new Peasant(ID, name, AD, HP, speed));
             if(role.equals("Warrior")) {
                 System.out.print("Enter the shield strength of the character " + name + " : ");
                 int shield = input.nextInt();
-                character.add_character(new Warrior(name, AD, shield, HP, speed));
+                character.add_character(new Warrior(ID, name, AD, shield, HP, speed));
             }
             if(role.equals("Mage")) {
                 System.out.print("Enter the magic damages of the character " + name + " : ");
                 int magic = input.nextInt();
-                character.add_character(new Mage(name, AD, magic, HP, speed));
+                character.add_character(new Mage(ID, name, AD, magic, HP, speed));
             }
             if(role.equals("Thief")) {
                 System.out.print("Enter the critical chance (0 to 1) of the character " + name + " : ");
                 float criticalChance = Float.parseFloat(String.valueOf(input.nextFloat()));
                 System.out.print("Enter the agility (0 to 1) of the character " + name + " : ");
                 float agility = Float.parseFloat(String.valueOf(input.nextFloat()));
-                character.add_character(new Thief  (name, AD, criticalChance, HP, agility, speed));
+                character.add_character(new Thief  (ID, name, AD, criticalChance, HP, agility, speed));
             }
             if(role.equals("WarriorMage")) {
                 System.out.print("Enter the magic damages of the character " + name + " : ");
                 int magic = input.nextInt();
                 System.out.print("Enter the shield strength of the character " + name + " : ");
                 int shield = input.nextInt();
-                character.add_character(new WarriorMage(name, AD, magic, shield, HP, speed));
+                character.add_character(new WarriorMage(ID, name, AD, magic, shield, HP, speed));
             }
 
         }
         else if (isCustom.matches("(?i).*" + "no|n" + ".*")) {
-            if(role.equals("Peasant"))     character.add_character(new Peasant    (name, 3, 10, 3));
-            if(role.equals("Warrior"))     character.add_character(new Warrior    (name, 5, 3, 100, 1));
-            if(role.equals("Mage"))        character.add_character(new Mage       (name, 2, 8, 13, 2));
-            if(role.equals("Thief"))       character.add_character(new Thief      (name, 4, 1f,15, 0.9f, 4));
-            if(role.equals("WarriorMage")) character.add_character(new WarriorMage(name, 5, 8,15, 100, 3));
+            if(role.equals("Peasant"))     character.add_character(new Peasant    (ID, name, 3, 10, 3));
+            if(role.equals("Warrior"))     character.add_character(new Warrior    (ID, name, 5, 3, 100, 1));
+            if(role.equals("Mage"))        character.add_character(new Mage       (ID, name, 2, 8, 13, 2));
+            if(role.equals("Thief"))       character.add_character(new Thief      (ID, name, 4, 1f,15, 0.9f, 4));
+            if(role.equals("WarriorMage")) character.add_character(new WarriorMage(ID, name, 5, 8,15, 100, 3));
         }
     }
 
@@ -236,34 +249,40 @@ public class Menu {
                 } else fighter[attacker].enableCritical();
             }
 
-            if(Objects.equals(className[defender], "Warrior")) {
-                int shield = fighter[defender].getShield();
-                damage = damage - shield;
-                if(damage <= 0) System.out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
-                else {
+            switch (className[defender]) {
+                case "Warrior" -> {
+                    int shield = fighter[defender].getShield();
+                    damage = damage - shield;
+                    if (damage <= 0)
+                        System.out.println("Warrior " + name[defender] + " nullified the damages with his shield.");
+                    else {
+                        fighter[defender].takeDamages(damage);
+                        System.out.println("\n" + name[defender] + " took " + damage + " damages");
+                    }
+                }
+                case "Thief" -> {
+                    float agility = fighter[defender].getAgility();
+                    boolean miss = new Random().nextFloat() <= agility;
+                    if (miss) System.out.println(className[attacker] + " " + name[attacker] + " missed");
+                    else {
+                        fighter[defender].takeDamages(damage);
+                        System.out.println(name[defender] + " took " + damage + " damages");
+                    }
+                }
+                case "WarriorMage" -> {
+                    int shield = fighter[defender].getShield();
+                    damage = damage - shield;
+                    if (damage <= 0)
+                        System.out.println("WarriorMage " + name[defender] + " nullified the damages with his shield.");
+                    else {
+                        fighter[defender].takeDamages(damage);
+                        System.out.println("\n" + name[defender] + " took " + damage + " damages");
+                    }
+                }
+                case null, default -> {
                     fighter[defender].takeDamages(damage);
                     System.out.println("\n" + name[defender] + " took " + damage + " damages");
                 }
-            } else if(Objects.equals(className[defender], "Thief")) {
-                float agility = fighter[defender].getAgility();
-                boolean miss = new Random().nextFloat() <= agility;
-
-                if (miss) System.out.println(className[attacker] + " " + name[attacker] + " missed");
-                else {
-                    fighter[defender].takeDamages(damage);
-                    System.out.println(name[defender] + " took " + damage + " damages");
-                }
-            } else if(Objects.equals(className[defender], "WarriorMage")) {
-                int shield = fighter[defender].getShield();
-                damage = damage - shield;
-                if(damage <= 0) System.out.println("WarriorMage " + name[defender] + " nullified the damages with his shield.");
-                else {
-                    fighter[defender].takeDamages(damage);
-                    System.out.println("\n" + name[defender] + " took " + damage + " damages");
-                }
-            } else {
-                fighter[defender].takeDamages(damage);
-                System.out.println("\n" + name[defender] + " took " + damage + " damages");
             }
 
             int currentHealthPoints = fighter[defender].getHealthPoints();
