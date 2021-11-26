@@ -1,7 +1,8 @@
 package rpg.game;
 
-import java.util.*;
-
+import java.util.Objects;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Menu {
     Character character = new Character();
@@ -28,19 +29,21 @@ public class Menu {
                 """
         );
 
-        // !input.hasNext("^[A-Za-z]+$")
         awaitChoice();
     }
 
     public int awaitChoice() {
+        // Await a menu choice.
         System.out.print("\nYour choice : ");
         Scanner input = new Scanner(System.in);
-        int inputChoice = Integer.parseInt(input.nextLine());
+        int inputChoice = IntegerInput(input);
         return choseOption(inputChoice);
     }
 
     public int choseOption(int choice) {
+        // Based on the input, do something related to the option.
         switch (choice){
+            case 0 -> awaitChoice();
             case 1 -> createCharacter("Peasant");
             case 2 -> createCharacter("Warrior");
             case 3 -> createCharacter("Mage");
@@ -53,18 +56,36 @@ public class Menu {
             case 10 -> saveGame();
             case 11 -> loadGame();
             case 12 -> System.exit(0);
-            case default -> System.out.println("Error.");
+            case default -> System.out.println("This command doesn't exist, please try again.");
         }
         return awaitChoice();
     }
 
     public void saveGame() {
+        // This method will call the SaveManager class and write the characters list into the file JSON.txt.
+        System.out.println("Saving the game..");
         SaveManager.saveForEach(character);
+        System.out.println("Saved");
     }
 
     public void loadGame() {
+        /** This method will call the SaveManager class and read the file JSON.txt.
+         * @return : "NotFound" the save file do not have any content.
+         * @return : "Invalid" the save file do not met the condition to be imported.
+         */
+
+        System.out.println("Loading the save file..");
         String JSON = SaveManager.readFile();
+        if(Objects.equals(JSON, "NotFound")) {
+            System.out.println("The save file is empty.\nCancelling..");
+            awaitChoice();
+            return;
+        }else if(Objects.equals(JSON, "Invalid")) {
+            System.out.println("The save file is not valid.\nCancelling..");
+            return;
+        }
         SaveManager.processingExtraction(JSON, character);
+        System.out.println("Loaded");
     }
 
     private void createCharacter(String role) {
@@ -87,35 +108,51 @@ public class Menu {
             Scanner input = new Scanner(System.in);
 
             System.out.print("Enter the attack damages of the character " + name + " : ");
-            int AD = input.nextInt();
+            int AD = IntegerInput(input);
             System.out.print("Enter the health points of the character " + name + " : ");
-            int HP = input.nextInt();
+            int HP = IntegerInput(input);
             System.out.print("Enter the initiative of the character " + name + " : ");
-            int speed = input.nextInt();
+            int speed = IntegerInput(input);
 
             if(role.equals("Peasant")) character.add_character(new Peasant(ID, name, AD, HP, speed));
             if(role.equals("Warrior")) {
                 System.out.print("Enter the shield strength of the character " + name + " : ");
-                int shield = input.nextInt();
+                int shield = IntegerInput(input);
                 character.add_character(new Warrior(ID, name, AD, shield, HP, speed));
             }
             if(role.equals("Mage")) {
                 System.out.print("Enter the magic damages of the character " + name + " : ");
-                int magic = input.nextInt();
+                int magic = IntegerInput(input);
                 character.add_character(new Mage(ID, name, AD, magic, HP, speed));
             }
             if(role.equals("Thief")) {
                 System.out.print("Enter the critical chance (0 to 1) of the character " + name + " : ");
-                float criticalChance = Float.parseFloat(String.valueOf(input.nextFloat()));
+                float criticalChance = 0f;
+                String criticalChanceStr = input.next();
+                if(criticalChanceStr.matches("^*" + "." + "*$")) {
+                    String[] values = criticalChanceStr.split("\\.");
+                    criticalChance = Float.parseFloat(values[0] + "." + values[1]);
+                }else if(criticalChanceStr.matches(",")) {
+                    String[] values = criticalChanceStr.split("\\.");
+                    criticalChance = Float.parseFloat(values[0] + "." + values[1]);
+                }
                 System.out.print("Enter the agility (0 to 1) of the character " + name + " : ");
-                float agility = Float.parseFloat(String.valueOf(input.nextFloat()));
+                float agility = 0f;
+                String agilityStr = input.next();
+                if(agilityStr.matches("^*" + "." + "*$")) {
+                    String[] values = agilityStr.split("\\.");
+                    agility = Float.parseFloat(values[0] + "." + values[1]);
+                }else if(agilityStr.matches(",")) {
+                    String[] values = agilityStr.split("\\.");
+                    agility = Float.parseFloat(values[0] + "." + values[1]);
+                }
                 character.add_character(new Thief  (ID, name, AD, criticalChance, HP, agility, speed));
             }
             if(role.equals("WarriorMage")) {
                 System.out.print("Enter the magic damages of the character " + name + " : ");
-                int magic = input.nextInt();
+                int magic = IntegerInput(input);
                 System.out.print("Enter the shield strength of the character " + name + " : ");
-                int shield = input.nextInt();
+                int shield = IntegerInput(input);
                 character.add_character(new WarriorMage(ID, name, AD, magic, shield, HP, speed));
             }
 
@@ -130,6 +167,13 @@ public class Menu {
     }
 
     public int menuRemove() {
+        /* This method will await the user choice, exit will quit this option.
+         *  If the user choice is a character ID, a verification of the ID will be undergoing.
+         *  If this ID is not found, the question for an ID will be asked again.
+         *  Once the confirmation of the ID is valid, a warning message asking if you are sure to proceed will pop.
+         *  If user choice is NO : Exit the option.
+         *  If user choice is YES : Removing the character from the list.
+         */
         Scanner input = new Scanner(System.in);
         System.out.print("If you wish to cancel the operation, please type : exit\n" +
                 "Otherwise please select the ID of the character you want to remove : ");
@@ -160,6 +204,10 @@ public class Menu {
     }
 
     public int display_submenu() {
+        /* This method will ask the user if he wants the details of a specific character.
+         *  If user choice is NO : Exit the option.
+         *  If user choice is YES : Calling the getCharacterInformation method.
+         */
         System.out.print("\nWould you like to get detailed information about a specific character ? Y/N : ");
         Scanner confirmChoice = new Scanner(System.in);
         String choice = confirmChoice.nextLine();
@@ -170,10 +218,14 @@ public class Menu {
     }
 
     public int getCharacterInformation() {
+        /* This method await a character ID and a verification of the ID will be undergoing.
+         *  If this ID is not found, the question for an ID will be asked again.
+         *  Once the confirmation of the ID is valid, the details of the character will be displayed.
+         */
         System.out.print("Please select the ID of the character you seek details : ");
         Scanner optionID = new Scanner(System.in);
 
-        int characterID = Integer.parseInt(optionID.nextLine());
+        int characterID = IntegerInput(optionID);
         int verifiedID = character.doesCharacterExist(characterID);
         if(verifiedID == -1) {
             System.out.println("The character ID provided doesn't seem to exist.\n");
@@ -185,25 +237,27 @@ public class Menu {
     }
 
     public void fightForGlory() {
-        //We need to add a clone so the stats aren't definitive.
+        if(character.list.size() <= 1) {
+            System.out.println("Not enough fighters in the characters list.");
+            awaitChoice();
+            return;
+        } else character.display_list();
+
         int selectedFighters = 0;
         int[] verifiedID    = new int[2];
         int[] healthPoints  = new int[2];
         int[] initiative    = new int[2];
         String[] name       = new String[2];
         String[] className  = new String[2];
-        Character[] fighter = new Character[2];
-
-        character.display_list();
-
         Character character2 = new Character();
+        Character[] fighter = new Character[2];
 
         while(selectedFighters != 2) {
             if(selectedFighters == 0) System.out.print("Chose your first fighter : ");
             if(selectedFighters == 1) System.out.print("Chose your second fighter : ");
 
             Scanner thisFighter = new Scanner(System.in);
-            int characterID = Integer.parseInt(thisFighter.nextLine());
+            int characterID = IntegerInput(thisFighter);
             verifiedID[selectedFighters] = character.doesCharacterExist(characterID);
             if(verifiedID[selectedFighters] == -1) {
                 System.out.println("The character ID provided doesn't seem to exist.\n");
@@ -215,32 +269,19 @@ public class Menu {
             switch (role) {
                 case "Peasant"     : character2.list.add(new Peasant(clone.indexID, clone.name, clone.attackDamages, clone.healthPoints, clone.initiative));
                 case "Warrior"     : character2.list.add(new Warrior(clone.indexID, clone.name, clone.attackDamages, clone.getShield(), clone.healthPoints, clone.initiative));
-                case "Mage"        : character2.list.add(new Mage(clone.indexID, clone.name, clone.attackDamages, clone.getEnhancedDamages(), clone.healthPoints, clone.initiative));
+                case "Mage"        : character2.list.add(new Mage(clone.indexID, clone.name, clone.attackDamages, clone.getMagicDamages(), clone.healthPoints, clone.initiative));
                 case "Thief"       : character2.list.add(new Thief(clone.indexID, clone.name, clone.attackDamages, clone.getCriticalChance(), clone.healthPoints,clone.getAgility(), clone.initiative));
-                case "WarriorMage" : character2.list.add(new WarriorMage(clone.indexID, clone.name, clone.attackDamages,clone.getEnhancedDamages(), clone.getShield(), clone.healthPoints, clone.initiative));
-
+                case "WarriorMage" : character2.list.add(new WarriorMage(clone.indexID, clone.name, clone.attackDamages,clone.getMagicDamages(), clone.getShield(), clone.healthPoints, clone.initiative));
             }
+
             fighter[selectedFighters]      = character2.getFighter(characterID);
             healthPoints[selectedFighters] = fighter[selectedFighters].getHealthPoints();
             initiative[selectedFighters]   = fighter[selectedFighters].getInitiative();
             name[selectedFighters]         = fighter[selectedFighters].getCharacterName();
             className[selectedFighters]    = fighter[selectedFighters].getClassName();
             selectedFighters++;
-
-//            listClone = (ArrayList<Character>) character.list;
-  //          character2.list.add(new Peasant(10,"zefz",2,2,2));
-            System.out.println("--------- Origin ");
-            character.display_list();
-            System.out.println("--------- Clone ");
-            character2.display_list();
-
-//            for (Character character : character2.list){
-//                System.out.println(character.IndexType());
-//            }
-
         }
 
-        System.out.println(className[0] + " " + className[1]);
         System.out.print("\n" + name[0] + " VS " + name[1] + "\n"+ "Are-You-Ready ? FIGHT !\n" +
                 "-------------------------------------------------");
 
@@ -255,7 +296,7 @@ public class Menu {
             int damage = 0;
 
             if(checkTurn == nbFighter) {
-                System.out.println("\n**** Turn " + nbTurn + " begins ! ****");
+                System.out.println("\n Turn " + nbTurn + " begins ! ");
                 nbTurn++;
                 checkTurn = 0;
             }
@@ -277,7 +318,6 @@ public class Menu {
             }
 
             System.out.println("\n" + className[attacker] + " " + name[attacker] + " attack " + className[defender] + " " + name[defender]);
-
             switch (className[defender]) {
                 case "Warrior", "WarriorMage" -> {
                     int shield = fighter[defender].getShield();
@@ -305,9 +345,7 @@ public class Menu {
             }
 
             int currentHealthPoints = fighter[defender].getHealthPoints();
-            if (currentHealthPoints < 0) {
-                currentHealthPoints = 0;
-            }
+            if (currentHealthPoints < 0) currentHealthPoints = 0;
             System.out.println(className[defender] + " " + name[defender] + " remaining hp is " + currentHealthPoints);
 
             if(currentHealthPoints <= 0) {
@@ -317,8 +355,40 @@ public class Menu {
                 break;
             }
 
+            if(nbTurn == 101) {
+                System.out.println("-------------------------------------------------");
+                System.out.println("You both survived, no one won.");
+                break;
+            }
+
             turn = !turn;
             checkTurn++;
         }
+    }
+
+    public int IntegerInput(Scanner input) {
+        // Prevent the program from crashing if the user input is a String.
+        int inputVerified;
+        try {
+            inputVerified = Integer.parseInt(input.nextLine());
+        }
+        catch (NumberFormatException nfe) {
+            System.out.println("NumberFormatException: " + nfe.getMessage());
+            return awaitChoice();
+        }
+        return inputVerified;
+    }
+
+    public float FloatInput(Scanner input) {
+        // Prevent the program from crashing if the user input is a String.
+        float inputVerified;
+        try {
+            inputVerified = Float.parseFloat(input.nextLine());
+        }
+        catch (NumberFormatException nfe) {
+            System.out.println("NumberFormatException: " + nfe.getMessage());
+            return awaitChoice();
+        }
+        return inputVerified;
     }
 }
