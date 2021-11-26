@@ -15,6 +15,7 @@ interface Stats {
     int getInitiative();
 
     int getShield();
+    int getMagicDamages();
     int getEnhancedDamages();
     float getAgility();
     float getCriticalChance();

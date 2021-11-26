@@ -1,1 +1,1 @@
-[0:Thief=>name:Fly,attackDamages:57,healthPoints:0,initiative:56,critChance:0.6,agility:0.3, 1:Peasant=>name:,attackDamages:3,healthPoints:10,initiative:3, 3:Peasant=>name:ZE,attackDamages:3,healthPoints:10,initiative:3]
+ezdzed
